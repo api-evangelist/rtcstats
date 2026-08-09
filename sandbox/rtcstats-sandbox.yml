@@ -1,0 +1,51 @@
+generated: '2026-08-09'
+method: searched
+source: https://rtcstats.com/showcase + https://rtcstats.com/pricing + https://rtcstats.com/api-docs.md
+description: 'rtcStats publishes NO API sandbox: there is no test mode, no test-vs-live key prefix,
+  no separate sandbox host, no fixture or trigger tooling and no published test dump files. Every API
+  call runs against production with a live application JWT and consumes real credits. What does exist
+  is a no-account way to see the product output and a free tier to exercise it — recorded here so a
+  later round does not re-search, and so the absence is on the record.'
+api_sandbox:
+  test_mode: false
+  test_keys: false
+  sandbox_host: null
+  test_fixtures: false
+  time_simulation: false
+  trigger_tooling: false
+  detail: Application tokens are minted per account in Settings > Applications with no test/live distinction.
+    The only host is https://api.rtcstats.com.
+try_it_surfaces:
+- name: Public showcase gallery
+  url: https://rtcstats.com/showcase
+  auth_required: false
+  description: '22 real analyzed WebRTC sessions from well-known products (Netflix cloud gaming, ChatGPT
+    Voice, Zoom 1:1, Google Meet, Jitsi Meet, Xbox Cloud Gaming and others), each opening a full shareable
+    rtcStats analysis at /share/<token> with no account. The closest thing to a playground: it shows
+    the exact payload shape the API returns, rendered.'
+  note: Read-only product output; not an API console and not callable.
+- name: Free plan
+  url: https://rtcstats.com/pricing
+  auth_required: true
+  description: 10 credits per month, no expiration, 3 seats. Lets a developer upload real dumps through
+    the UI, but does NOT include API or MCP access — those start at Developer.
+- name: Anonymous MCP tools/list
+  url: https://api.rtcstats.com/v1.0/mcp
+  auth_required: false
+  description: The MCP endpoint answers initialize and tools/list without a token (HTTP 200), so an
+    agent can discover the real tool contract before buying. tools/call requires the Bearer application
+    JWT.
+- name: Self-hosted open-source collector
+  url: https://github.com/rtcstats/rtcstats
+  auth_required: false
+  description: rtcstats-js + rtcstats-server (MIT) can be run locally to generate genuine dumps to test
+    against, and the monorepo ships a dump-importer and an example app.
+test_data:
+  published_test_values: []
+  note: No test card, test identifier or magic-value equivalent exists — the input is a WebRTC dump
+    file, and the provider publishes no sample dump for download. The showcase sessions are viewable
+    but not downloadable as dumps.
+gaps:
+- No downloadable sample webrtc-internals dump, so a developer cannot exercise POST /v1.0/analyze end
+  to end before paying.
+- No test mode means every integration test consumes a paid credit against production.

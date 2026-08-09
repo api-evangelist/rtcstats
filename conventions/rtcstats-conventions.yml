@@ -1,0 +1,119 @@
+generated: '2026-08-09'
+method: searched
+source: https://rtcstats.com/api-docs.md
+docs:
+  - https://rtcstats.com/api-docs
+  - https://rtcstats.com/api-docs.md
+  - https://rtcstats.com/llms.txt
+description: >-
+  Cross-cutting request/response semantics for the rtcStats REST API v1.0,
+  captured from the published API reference and the OpenAPI. The API is small
+  and deliberately flat: one bearer token, one version segment in the path, a
+  two-field error envelope, and a credit-metered consumption model in place of
+  rate limiting.
+authentication:
+  style: http-bearer
+  header: 'Authorization: Bearer <application JWT>'
+  scheme_name: BearerAuth
+  bearer_format: JWT
+  token_issuance: rtcStats dashboard, Settings > Applications; the token is shown once at creation and cannot be read back
+  plan_gate: API and MCP access require the Developer plan or above; a 403 is returned when the plan does not include API access
+  detail: authentication/rtcstats-authentication.yml
+idempotency:
+  supported: false
+  header: null
+  detail: >-
+    rtcStats documents no idempotency key. The chunked upload flow does carry a
+    client-generated `fileId` shared by every chunk and the assemble request,
+    which de-duplicates chunks within one upload, but it is not documented as a
+    retry-safe idempotency key and does not protect the credit-consuming
+    assemble/analyze step from double submission. Recorded as absent rather
+    than reinterpreted.
+pagination:
+  supported: false
+  detail: >-
+    GET /v1.0/sessions returns {total, data[]} with no limit/offset/cursor
+    parameters. Result-set narrowing is done with the fifteen filter query
+    parameters (name, observationTypes, observationTags, os, browser,
+    browserVersion, userId, conferenceId, sessionId, hasCritical, hasHigh,
+    hasMedium, hasLowScore, hasMediumScore, hasHighScore) rather than by paging.
+  filter_combination: Different filters are AND-combined; multiple values within one filter are OR-combined.
+  array_parameter_form: repeated query params or comma-separated values
+field_expansion:
+  supported: false
+  detail: >-
+    Two fixed projections instead of expansion — POST /v1.0/enrich returns only
+    {scores, observationsCount, observations, userAgentData}, while
+    GET /v1.0/sessions/{rtcstatsId} returns the full analysis payload.
+metadata:
+  supported: true
+  detail: >-
+    userId, conferenceId and sessionId are carried in the rtcstats JWT at
+    collection time and become first-class filters on sessions. Session titles
+    are set from fileName on upload/analyze.
+request_tracing:
+  request_id_header: null
+  detail: No request-id or correlation header is documented. Responses carry processorVersion (the @rtcstats/rtcstats-processor semver) and, on enrich, generatedAt (epoch ms).
+versioning:
+  scheme: uri-path
+  current: v1.0
+  example: https://api.rtcstats.com/v1.0/sessions
+  media_type_versioning: false
+  header_versioning: false
+  payload_schema_version: >-
+    The analysis payload carries its own schema version, documented in llms.txt
+    (schema 6.3 for the get_session payload; a note that unitless aggregate keys
+    were removed at schema 6.9).
+  detail: lifecycle/rtcstats-lifecycle.yml
+error_envelope:
+  format: custom-json
+  rfc9457: false
+  content_type: application/json
+  shape: '{ "error": "<message>", "errorCode": "<code>" }'
+  required_fields: [error, errorCode]
+  mcp_transport_errors: >-
+    The MCP endpoint uses a different shape — a JSON-RPC 2.0 envelope
+    (McpStreamableHttpTransportError) for HTTP-level failures, with id always
+    null. Tool failures come back with HTTP 200 inside the stream as JSON-RPC
+    responses.
+  detail: errors/rtcstats-problem-types.yml
+rate_limiting:
+  request_rate_limits: none documented
+  rate_limit_headers: none documented
+  model: credit quota
+  detail: >-
+    Consumption is metered in credits (1 credit = 1 file analyzed), not requests
+    per second. Exhaustion is signalled with HTTP 402 "No credits available".
+    Remaining balance is readable at GET /v1.0/quota and via the get_quota MCP
+    tool. Monthly credits do not roll over; purchased top-up credits do and are
+    only drawn on after the monthly allowance is spent.
+  see: rate-limits/rtcstats-rate-limits.yml
+payload_conventions:
+  number_formatting: >-
+    Numeric values are rounded — epoch timestamps to a whole millisecond, every
+    other number to at most 2 decimals, except audioLevel values which keep more
+    precision. Integer counts and large identifiers are preserved.
+  omission_vs_null: >-
+    The enrich projection omits absent observation fields entirely rather than
+    returning null; only `type` and `severity` are always present. In the full
+    session payload, aiSummary is null until background generation completes and
+    is always null on POST /analyze and on plans without the AI feature.
+  plan_gated_fields: embedUrl is omitted from responses on non-Enterprise plans.
+  stability_warning: >-
+    The docs state that only the documented fields are stable and other fields
+    may appear and change without notice.
+request_size_limits:
+  request_body_cap: ~4.5MB (Vercel platform cap) — larger dumps must use the chunked multipart flow
+  assemble_request_cap: at most 1KB
+  file_size_limit: plan-dependent; exceeded returns HTTP 413
+  chunked_protocol: >-
+    multipart/form-data chunks (chunk, fileId, chunkIndex) each returning
+    {"success": true} and consuming no credit, followed by a JSON assemble
+    request {"assemble": true, "fileId": "...", "fileName": "optional"} which
+    runs the pipeline and consumes one credit. Assemble detection is shape-based.
+cross_references:
+  errors: errors/rtcstats-problem-types.yml
+  lifecycle: lifecycle/rtcstats-lifecycle.yml
+  authentication: authentication/rtcstats-authentication.yml
+  rate_limits: rate-limits/rtcstats-rate-limits.yml
+  mcp: mcp/rtcstats-mcp.yml

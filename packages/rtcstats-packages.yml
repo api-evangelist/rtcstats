@@ -1,0 +1,60 @@
+generated: '2026-08-09'
+method: searched
+source: https://registry.npmjs.org/ + https://github.com/rtcstats
+description: >-
+  rtcStats ships its collection layer as open-source npm packages under the
+  @rtcstats scope (MIT, monorepo at github.com/rtcstats/rtcstats) plus a
+  standalone MCP server package. There is no first-party server-side REST client
+  library for the rtcstats.com analysis API — the REST API is called directly
+  over HTTPS with a Bearer application JWT.
+registries_probed:
+  - {registry: npm, result: 3 first-party packages}
+  - {registry: pypi, result: none}
+  - {registry: maven-central, result: none}
+  - {registry: nuget, result: none}
+  - {registry: pkg.go.dev, result: none}
+  - {registry: rubygems, result: none}
+  - {registry: packagist, result: none}
+  - {registry: crates.io, result: none}
+packages:
+  - language: javascript
+    registry: npm
+    name: "@rtcstats/rtcstats-js"
+    version: 2.4.0
+    url: https://www.npmjs.com/package/@rtcstats/rtcstats-js
+    repository: https://github.com/rtcstats/rtcstats
+    install: npm install @rtcstats/rtcstats-js
+    license: MIT
+    official: true
+    role: client-sdk
+    description: Browser-side collection SDK — wraps RTCPeerConnection, gathers WebRTC API traces and periodic getStats output, ships them to a collector.
+  - language: javascript
+    registry: npm
+    name: "@rtcstats/rtcstats-shared"
+    version: 2.5.0
+    url: https://www.npmjs.com/package/@rtcstats/rtcstats-shared
+    repository: https://github.com/rtcstats/rtcstats
+    install: npm install @rtcstats/rtcstats-shared
+    license: MIT
+    official: true
+    role: shared-library
+    description: Shared types/helpers used by rtcstats-js and rtcstats-server.
+  - language: javascript
+    registry: npm
+    name: mcp-rtcstats
+    version: 1.0.1
+    url: https://www.npmjs.com/package/mcp-rtcstats
+    repository: https://github.com/rtcstats/mcp-rtcstats
+    install: npm install mcp-rtcstats
+    license: MIT
+    official: true
+    role: mcp-server
+    description: Model Context Protocol server for WebRTC stats via rtcstats.com. Published by the rtcStats maintainer (npm user oanguenot).
+source_repositories:
+  - {name: rtcstats/rtcstats, url: 'https://github.com/rtcstats/rtcstats', description: Monorepo for the open-source rtcStats projects (rtcstats-js, rtcstats-server, features, extension, dump-importer), license MIT}
+  - {name: rtcstats/rtcstats-server, url: 'https://github.com/rtcstats/rtcstats-server', description: Self-hosted collector server}
+  - {name: rtcstats/rtcstats-js, url: 'https://github.com/rtcstats/rtcstats-js', description: Client SDK repo}
+  - {name: rtcstats/embed-viewer, url: 'https://github.com/rtcstats/embed-viewer', description: Display rtcStats session analysis inside your own application (Enterprise embeddable viewer)}
+notes:
+  - "@rtcstats/rtcstats-processor is referenced in API responses (processorVersion) but is not published to the public npm registry (404)."
+  - No official Python/Java/Go/.NET/Ruby/PHP/Rust client library for the REST API was found on any public registry.

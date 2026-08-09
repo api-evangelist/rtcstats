@@ -1,0 +1,85 @@
+generated: '2026-08-09'
+method: derived
+source: mcp/rtcstats-mcp-tools.json + openapi/rtcstats-api-openapi.yml
+description: >-
+  Binds every rtcStats MCP tool to its backing OpenAPI operation. The mapping is
+  high-confidence throughout because both surfaces were captured live: the MCP
+  tool list (with real inputSchema) from an anonymous tools/list call, and the
+  REST contract from the published OpenAPI 3.0.3. The two surfaces are NOT
+  equivalent — MCP exposes only the read side. Every ingest and mutation
+  operation (upload, analyze, enrich, deleteSession) is REST-only, so an agent
+  wired to the MCP server can query analyses but cannot submit a dump or delete
+  a session.
+surfaces:
+  openapi:
+    file: openapi/rtcstats-api-openapi.yml
+    original: openapi/_original/rtcstats-openapi.json
+    source: https://rtcstats.com/api/openapi
+    server: https://api.rtcstats.com
+    gated: false
+  mcp:
+    url: https://api.rtcstats.com/v1.0/mcp
+    transport: streamable-http
+    tools_list_gated: false
+    tools_call_gated: true
+  graphql: null
+crosswalk:
+  - tool: get_quota
+    category: account
+    rest: [quota]
+    rest_path: GET /v1.0/quota
+    binding: rest
+    confidence: high
+    note: >-
+      Same account/credit projection. The MCP tool additionally returns
+      accountName and accountPlan, which the OpenAPI QuotaResponse schema does
+      not enumerate — a small MCP-side superset.
+  - tool: list_sessions
+    category: sessions
+    rest: [listSessions]
+    rest_path: GET /v1.0/sessions
+    binding: rest
+    confidence: high
+    note: >-
+      One-to-one. All fifteen MCP filter properties (name, observationTypes,
+      observationTags, os, browser, browserVersion, userId, conferenceId,
+      sessionId, hasCritical, hasHigh, hasMedium, hasLowScore, hasMediumScore,
+      hasHighScore) exist verbatim as query parameters on the REST operation.
+  - tool: get_session
+    category: sessions
+    rest: [session]
+    rest_path: GET /v1.0/sessions/{rtcstatsId}
+    binding: rest
+    confidence: high
+    note: rtcstatsId (UUID) is the single input on both surfaces.
+mcp_only: []
+rest_only:
+  - group: ingest
+    operations:
+      - {operationId: upload, path: POST /v1.0/upload, reason: 'Chunked multipart dump ingest, consumes one credit; no MCP tool'}
+      - {operationId: analyze, path: POST /v1.0/analyze, reason: 'Analyze a dump without storing it (?save=true persists), consumes one credit; no MCP tool'}
+      - {operationId: enrich, path: POST /v1.0/enrich, reason: 'Scores + observations projection for a self-hosted collector, consumes one credit, never stores; no MCP tool'}
+  - group: catalog
+    operations:
+      - {operationId: observations, path: GET /v1.0/observations, reason: 'Catalog of observation types the analyzer can emit; read-only and credit-free, but not surfaced as an MCP tool even though list_sessions filters depend on these type names'}
+  - group: mutation
+    operations:
+      - {operationId: deleteSession, path: 'DELETE /v1.0/sessions/{rtcstatsId}', reason: 'Destructive; deliberately absent from MCP (all MCP tools are read-only)'}
+  - group: transport
+    operations:
+      - {operationId: mcpStreamablePost, path: POST /v1.0/mcp, reason: 'The MCP transport endpoint itself, declared in the OpenAPI; not a tool'}
+coverage:
+  mcp_tools_total: 3
+  mcp_tools_bound_to_rest: 3
+  mcp_only_tools: 0
+  rest_operations_total: 9
+  rest_operations_with_a_tool: 3
+  rest_operations_without_a_tool: 6
+gaps:
+  - >-
+    GET /v1.0/observations is read-only, credit-free and directly feeds the
+    observationTypes filter that list_sessions accepts, yet has no MCP tool. An
+    agent must read llms.txt or the REST catalog to learn valid filter values.
+  - >-
+    No MCP tool can submit a dump, so the agent-side loop stops at "query what
+    was already analyzed" — the analyze/enrich path stays REST-only.

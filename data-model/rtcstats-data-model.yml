@@ -1,0 +1,201 @@
+generated: '2026-08-09'
+method: derived
+source: openapi/rtcstats-api-openapi.yml + https://rtcstats.com/llms.txt
+description: 'Entity graph derived from the 14 component schemas in the rtcStats OpenAPI plus the analysis-payload
+  schema published in llms.txt (schema 6.3). The core is a Session: one uploaded WebRTC dump, analyzed
+  once into scores, a set of Observations, an AI summary and per-peer-connection stats. There is exactly
+  one identifier domain — rtcstatsId, a UUID — and no compound or prefixed ids.'
+identifiers:
+- name: rtcstatsId
+  format: uuid
+  entity: Session
+  description: Primary key for a stored session. Returned on upload/analyze (with ?save=true), and the
+    only input to get_session / GET /v1.0/sessions/{rtcstatsId}.
+- name: fileId
+  format: client-generated string
+  entity: ChunkedUpload
+  description: Client-chosen id shared by every chunk and the assemble request of one chunked upload.
+    Ephemeral, not a stored entity key.
+- name: type
+  format: camelCase string key
+  entity: ObservationType
+  description: Observation type key (e.g. turnNoConfig, slowDtlsEstablishment). Catalog at GET /v1.0/observations;
+    also the value space of the observationTypes filter.
+- name: userId / conferenceId / sessionId
+  format: string
+  entity: Session
+  description: Customer-supplied identifiers carried in the rtcstats JWT at collection time; filterable,
+    not resolvable to their own resources.
+entities:
+- name: Session
+  schemas:
+  - SessionAbstract
+  - SessionListItem
+  - SessionsListResponse
+  - AnalyzeResponseData
+  description: One analyzed WebRTC dump. Carries call window (callStart, callEnd, durationMs), the five
+    scores, an observation set, an AI summary, per-connection stats and session-wide aggregatedStats.
+  operations:
+  - upload
+  - analyze
+  - listSessions
+  - session
+  - deleteSession
+  key: rtcstatsId
+- name: Scores
+  schemas:
+  - Scores
+  description: experienceScore (0-100 float), audioScore, videoScore, connectivityScore, observationsScore.
+    Any of the media scores may be null.
+  operations:
+  - enrich
+  - session
+- name: Observation
+  schemas:
+  - Observation
+  description: 'A single finding on a session: type, severity (info|low|medium|high|critical), category,
+    tags[] and a source pointer into the dump (pid, sid, cpid, did, rid, ssrcId, labelId, timestamp).'
+  operations:
+  - enrich
+  - session
+  - listSessions
+- name: ObservationsCount
+  schemas:
+  - ObservationsCount
+  description: Severity histogram (critical, high, medium, low, info) that sums to observations.length.
+  operations:
+  - enrich
+  - session
+- name: ObservationType
+  schemas:
+  - ObservationTypesResponse
+  description: 'Catalog entry describing an observation the analyzer can emit: type, title, severity[]
+    and tags[] (the full arrays of values that type can carry).'
+  operations:
+  - observations
+- name: EnrichResult
+  schemas:
+  - EnrichResponse
+  - EnrichData
+  description: The stateless projection returned by POST /v1.0/enrich — scores, observationsCount, observations,
+    userAgentData — plus processorVersion and generatedAt. Never stored.
+  operations:
+  - enrich
+- name: Quota
+  schemas:
+  - QuotaResponse
+  description: 'Account credit position: allowedCredits and remainingCredits (monthly plus purchased
+    pool). The MCP get_quota tool additionally returns accountName and accountPlan.'
+  operations:
+  - quota
+- name: Error
+  schemas:
+  - Error
+  description: Two-field REST error envelope {error, errorCode}.
+  operations:
+  - '*'
+- name: McpEnvelope
+  schemas:
+  - McpStreamableHttpTransportError
+  - McpJsonRpcSseDataLine
+  description: JSON-RPC 2.0 transport envelopes for the MCP Streamable HTTP endpoint.
+  operations:
+  - mcpStreamablePost
+relationships:
+- from: Session
+  to: Observation
+  type: has_many
+  via: data.observations[]
+- from: Session
+  to: ObservationsCount
+  type: has_one
+  via: data.observationsCount
+- from: Session
+  to: Scores
+  type: has_one
+  via: data.experienceScore / audioScore / videoScore / connectivityScore
+- from: Session
+  to: AiSummary
+  type: has_one
+  via: data.aiSummary
+  note: null until background generation completes; always null on POST /analyze and on plans without
+    the AI feature.
+- from: Session
+  to: PeerConnection
+  type: has_many
+  via: data.pConnections (object keyed by connection id), count in data.pConnectionsNumber
+- from: Session
+  to: SessionAbstract
+  type: has_one
+  via: abstract
+  note: Denormalized index row driving the list filters; null for rows not yet indexed.
+- from: Observation
+  to: ObservationType
+  type: belongs_to
+  via: type
+  note: Resolves against the catalog at GET /v1.0/observations.
+- from: Observation
+  to: PeerConnection
+  type: belongs_to
+  via: source.pid
+- from: Observation
+  to: Stream
+  type: belongs_to
+  via: source.sid / source.ssrcId
+- from: Observation
+  to: CandidatePair
+  type: belongs_to
+  via: source.cpid
+- from: Observation
+  to: Device
+  type: belongs_to
+  via: source.did / source.rid / source.labelId
+- from: SessionAbstract
+  to: ObservationType
+  type: has_many
+  via: observationTypes[]
+  note: Only critical/high/medium observations are indexed.
+- from: EnrichResult
+  to: Observation
+  type: has_many
+  via: data.observations[] (trimmed, SQL-friendly records)
+aggregate_stats_key_grammar:
+  form: <metric>_<scope>_<agg>_<unit>
+  metric:
+  - jitter
+  - rtt
+  - bitrate
+  - packetLoss
+  - mos
+  scope:
+  - in_audio
+  - out_audio
+  - in_video
+  - out_video
+  agg:
+  - avg
+  - min
+  - max
+  - p5
+  - p95
+  - stddev
+  unit:
+    ms: jitter, rtt
+    kbps: bitrate
+    percent: packetLoss
+    score: mos, 0-4.5 where 0 means unusable transport
+  example: rtt_out_audio_avg_ms
+  session_level:
+  - jitter_avg_ms
+  - rtt_avg_ms
+  counts:
+  - in_audio_count
+  - out_audio_count
+  - in_video_count
+  - out_video_count
+  source: https://rtcstats.com/llms.txt
+notes:
+- 'The schema set is response-shaped: there are no independently addressable sub-resources — observations,
+  scores and connection stats are only reachable inside a Session.'
+- Schema version of the analysis payload is documented out-of-band in llms.txt (6.3 at capture), not
+  in the OpenAPI.

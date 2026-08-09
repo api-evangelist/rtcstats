@@ -1,0 +1,69 @@
+generated: '2026-08-09'
+method: searched
+source: https://rtcstats.com/pricing + https://rtcstats.com/kb/usage-and-billing/credits-in-rtcstats
+  + openapi/rtcstats-api-openapi.yml
+description: 'rtcStats does not rate-limit by requests per second and publishes no rate-limit response
+  headers. Consumption is metered in credits — one credit per file analyzed — with a monthly allowance
+  per plan. The limit is machine-readable at runtime: GET /v1.0/quota (and the get_quota MCP tool) return
+  allowedCredits and remainingCredits, and exhaustion is signalled with HTTP 402 "No credits available".'
+model: credit-quota
+unit: credit (1 credit = 1 file uploaded and analyzed)
+headers:
+  rate_limit_headers: null
+  retry_after: null
+  note: No X-RateLimit-*, RateLimit-* (draft) or Retry-After headers are documented.
+runtime_signal:
+  endpoint: GET /v1.0/quota
+  operationId: quota
+  mcp_tool: get_quota
+  fields:
+  - allowedCredits
+  - remainingCredits
+  exhaustion_status: 402
+  exhaustion_body: '{"error": "...", "errorCode": "..."}'
+rate_limits:
+- plan: Free
+  limit_count: 10
+  limit_unit: credits
+  time_frame: month
+  rollover: false
+  notes: Basic analysis only; full analysis limited to month 1. 1 month retention, 3 team members.
+- plan: Developer
+  limit_count: 500
+  limit_unit: credits
+  time_frame: month
+  rollover: false
+  notes: Unlocks API and MCP access, Experience Score, AI summaries, Observations and Deductions. 3
+    months retention, 10 team members.
+- plan: Enterprise
+  limit_count: 5000
+  limit_unit: credits
+  time_frame: month
+  rollover: false
+  notes: Adds the embeddable viewer, 3rd-party storage and whitelabel sharing. 3 months retention, 50
+    team members.
+top_ups:
+- credits: 5000
+  price_usd: 100
+  rollover: true
+- credits: 50000
+  price_usd: 500
+  rollover: true
+- credits: 500000
+  price_usd: 2500
+  rollover: true
+consumption_rules:
+- Monthly credits do not roll over; purchased top-up credits do and never expire while the account stays
+  paid.
+- Monthly credits are drawn down first; purchased credits are used only after the monthly allowance
+  is exhausted.
+- Purchased credits become invalid if the account downgrades to Free.
+- A successful upload, analyze or enrich consumes exactly one credit.
+- Individual chunk uploads in the chunked flow consume no credit — only the assemble step does.
+- All three MCP tools (get_quota, list_sessions, get_session) are read-only and consume no credits.
+- GET /v1.0/quota, GET /v1.0/observations, GET /v1.0/sessions and DELETE /v1.0/sessions/{rtcstatsId}
+  consume no credits.
+size_limits:
+  request_body_cap: ~4.5MB per request; larger dumps must use the chunked multipart flow
+  assemble_request_cap: 1KB
+  file_size_limit: plan-dependent, not published as a number; exceeded returns HTTP 413

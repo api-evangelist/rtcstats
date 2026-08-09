@@ -1,0 +1,117 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the rtcStats API
+  version: 1.0.0
+extends: openapi/rtcstats-api-openapi.yml
+x-provenance:
+  generated: '2026-08-09'
+  method: generated
+  source: openapi/rtcstats-api-openapi.yml
+  note: >-
+    Captures API Evangelist enrichment as an Overlay so the harvested spec at
+    openapi/_original/rtcstats-openapi.json and its YAML twin stay byte-faithful
+    to what rtcstats.com serves. Nothing here changes the provider's contract.
+actions:
+  - target: $.info
+    update:
+      x-apievangelist-provider: rtcstats
+      x-apievangelist-artifacts:
+        conventions: conventions/rtcstats-conventions.yml
+        errors: errors/rtcstats-problem-types.yml
+        lifecycle: lifecycle/rtcstats-lifecycle.yml
+        authentication: authentication/rtcstats-authentication.yml
+        rate_limits: rate-limits/rtcstats-rate-limits.yml
+        mcp: mcp/rtcstats-mcp.yml
+        tool_crosswalk: mcp/rtcstats-tool-crosswalk.yml
+        data_model: data-model/rtcstats-data-model.yml
+      x-error-envelope:
+        format: custom-json
+        rfc9457: false
+        shape: '{ "error": "<message>", "errorCode": "<code>" }'
+      x-idempotency:
+        supported: false
+        note: No idempotency key is documented; the chunked-upload fileId is a de-duplication id only.
+      x-rate-limiting:
+        model: credit-quota
+        headers: none
+        exhaustion_status: 402
+        runtime_signal: GET /v1.0/quota
+  - target: $.servers
+    update:
+      - url: https://api.rtcstats.com
+        description: Production (the only host; there is no sandbox or test-mode host)
+  - target: $.paths['/v1.0/upload'].post
+    update:
+      x-agentic-consequence: write
+      x-credit-cost: 1
+      x-notes: >-
+        Two-phase chunked flow. Individual multipart chunks return {"success": true}
+        and cost nothing; only the JSON assemble request runs the pipeline and
+        consumes a credit. Assemble detection is shape-based, so a raw JSON dump
+        body still works for small files.
+  - target: $.paths['/v1.0/analyze'].post
+    update:
+      x-agentic-consequence: write
+      x-credit-cost: 1
+      x-notes: >-
+        Does not store the session by default — pass ?save=true to persist it, at
+        which point the response carries rtcstatsId and rtcstatsUrl. aiSummary is
+        always null on this operation.
+  - target: $.paths['/v1.0/enrich'].post
+    update:
+      x-agentic-consequence: write
+      x-credit-cost: 1
+      x-notes: >-
+        Stateless projection for a self-hosted rtcstats-server: returns scores,
+        observationsCount, observations and userAgentData only, and never stores
+        the session. Observation records are flat and SQL-friendly — only type and
+        severity are always present; absent fields are omitted, never null.
+  - target: $.paths['/v1.0/quota'].get
+    update:
+      x-agentic-consequence: read
+      x-credit-cost: 0
+      x-mcp-tool: get_quota
+  - target: $.paths['/v1.0/observations'].get
+    update:
+      x-agentic-consequence: read
+      x-credit-cost: 0
+      x-notes: >-
+        Catalog of observation types the analyzer can emit. This is the value space
+        for the observationTypes filter on GET /v1.0/sessions and the list_sessions
+        MCP tool — read it first when building a filter.
+      x-mcp-tool: null
+  - target: $.paths['/v1.0/sessions'].get
+    update:
+      x-agentic-consequence: read
+      x-credit-cost: 0
+      x-mcp-tool: list_sessions
+      x-pagination:
+        supported: false
+        note: Returns {total, data[]} with no limit/offset/cursor; narrow with the fifteen filters instead.
+  - target: $.paths['/v1.0/sessions/{rtcstatsId}'].get
+    update:
+      x-agentic-consequence: read
+      x-credit-cost: 0
+      x-mcp-tool: get_session
+      x-notes: >-
+        embedUrl is omitted from the response on non-Enterprise plans. aiSummary is
+        null until background generation completes.
+  - target: $.paths['/v1.0/sessions/{rtcstatsId}'].delete
+    update:
+      x-agentic-consequence: destructive
+      x-credit-cost: 0
+      x-mcp-tool: null
+      x-notes: Deliberately absent from the MCP surface — all MCP tools are read-only.
+  - target: $.paths['/v1.0/mcp'].post
+    update:
+      x-transport: streamable-http
+      x-protocol-version: '2025-06-18'
+      x-notes: >-
+        MCP Streamable HTTP transport, stateless JSON-RPC 2.0. initialize and
+        tools/list answer anonymously; tools/call requires the Bearer application JWT.
+  - target: $.components.schemas.Error
+    update:
+      x-error-codes:
+        - {code: parsing_issue, status: 415, meaning: Corrupt or unsupported dump; generic message}
+        - {code: other_issue, status: 415, meaning: Invalid file or format too old; specific message}
+      x-note: The full errorCode value space is not published; only the two 415 codes are documented.

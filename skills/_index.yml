@@ -1,0 +1,48 @@
+generated: '2026-08-09'
+method: generated
+source: openapi/rtcstats-api-openapi.yml + conventions/rtcstats-conventions.yml + errors/rtcstats-problem-types.yml
+  + mcp/rtcstats-mcp.yml
+description: Packaged Agent Skills for the rtcStats API. Every operationId referenced below was verified
+  against the published OpenAPI 3.0.3 — the spec declares exactly nine operations (upload, analyze,
+  enrich, mcpStreamablePost, quota, observations, listSessions, session, deleteSession) and all nine
+  are covered across these four skills. No provider-published AGENTS.md or skill files were found.
+skills:
+- file: rtcstats-analyze-a-webrtc-dump.md
+  name: Analyze a WebRTC dump with rtcStats
+  description: Submit a webrtc-internals or rtcstats dump and read back the Experience Score, Observations
+    and AI summary, including the chunked upload path.
+  api: openapi/rtcstats-api-openapi.yml
+  operations:
+  - analyze
+  - upload
+  - session
+  - quota
+- file: rtcstats-triage-bad-sessions.md
+  name: Triage bad WebRTC sessions in rtcStats
+  description: Filter stored sessions by observation type, tag, severity, score band, browser/OS or
+    customer identifier, then pull the full analysis for the worst.
+  api: openapi/rtcstats-api-openapi.yml
+  operations:
+  - observations
+  - listSessions
+  - session
+  - deleteSession
+- file: rtcstats-enrich-self-hosted-collector.md
+  name: Enrich sessions from a self-hosted rtcstats collector
+  description: Get scores and a flat SQL-friendly observation list for a dump your own rtcstats-server
+    holds, without storing the session on rtcstats.com.
+  api: openapi/rtcstats-api-openapi.yml
+  operations:
+  - enrich
+  - quota
+  - observations
+- file: rtcstats-query-sessions-over-mcp.md
+  name: Query rtcStats sessions over MCP
+  description: Wire an agent to the hosted MCP server and use get_quota, list_sessions and get_session,
+    including what the MCP surface deliberately cannot do.
+  api: openapi/rtcstats-api-openapi.yml
+  operations:
+  - mcpStreamablePost
+  - quota
+  - listSessions
+  - session

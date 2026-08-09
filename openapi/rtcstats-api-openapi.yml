@@ -1,0 +1,1572 @@
+openapi: 3.0.3
+info:
+  title: rtcStats API
+  version: '1.0'
+  description: API for third-party applications to <b>upload</b>, <b>analyze</b>, or use the <b>MCP Streamable
+    HTTP</b> endpoint at <code>/v1.0/mcp</code>. <br/><br/>Uses Bearer token authentication. <br/><br/><b>Number
+    formatting:</b> numeric values in responses are rounded, epoch timestamps to a whole millisecond and
+    every other number to at most 2 decimals; integer counts and large identifiers are preserved. <br/><br/><b>Note:</b>
+    Need to create an application token in Settings from your paid account.
+servers:
+- url: https://api.rtcstats.com
+security:
+- BearerAuth: []
+paths:
+  /v1.0/upload:
+    post:
+      summary: Upload
+      description: 'Upload and store a WebRTC dump file or a rtcstats file to your account using a chunked
+        flow. <br/><br/>The API works in two steps: <ul><li>- First upload chunks via multipart/form-data</li><li>-
+        Then assemble via application/json</li></ul>The API consumes one credit if successful.'
+      operationId: upload
+      tags:
+      - rtcStats API
+      security:
+      - BearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+              - chunk
+              - fileId
+              - chunkIndex
+              properties:
+                chunk:
+                  type: string
+                  format: binary
+                fileId:
+                  type: string
+                  description: Client-generated id for this chunked upload (same value for all chunks
+                    and assemble).
+                chunkIndex:
+                  type: string
+          application/json:
+            schema:
+              type: object
+              required:
+              - fileId
+              - assemble
+              - fileName
+              properties:
+                fileId:
+                  type: string
+                  description: Same id used when uploading chunks.
+                assemble:
+                  type: boolean
+                fileName:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - success
+                properties:
+                  success:
+                    type: boolean
+                  rtcstatsId:
+                    type: string
+                    description: Stored rtcstats session identifier. Present after assemble; absent during
+                      chunk upload. Use with GET or DELETE /sessions/{rtcstatsId}.
+                  rtcstatsUrl:
+                    type: string
+                    description: Dashboard URL to open the rtcstats session. Present after assemble; absent
+                      during chunk upload.
+                  embedUrl:
+                    type: string
+                    description: URL to open the session in the embedded viewer. Only present on the Enterprise
+                      plan after assemble.
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '402':
+          description: No credits available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '413':
+          description: File exceeds size limit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: File rejected by the parser. <code>errorCode</code> is <code>parsing_issue</code>
+            (corrupt or unsupported dump, generic message) or <code>other_issue</code> (invalid file or
+            format too old, specific message)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Unexpected processing error. A generic message is returned; internal error details
+            are not exposed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1.0/analyze:
+    post:
+      summary: Analyze
+      description: 'Upload a webrtc-internal file or a rtcstats file, process it and return summary, observations
+        and scores. By default the session is not stored: pass query <code>save=true</code> (or <code>save=1</code>)
+        to also persist the dump like <code>/upload</code>.<br/><br/>Send the dump the same way as <code>/upload</code>:
+        upload the file in chunks, then send a small JSON assemble request.<br/><br/>This API consumes
+        one credit if successful.'
+      operationId: analyze
+      tags:
+      - rtcStats API
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: save
+        in: query
+        required: false
+        schema:
+          type: string
+        description: When <code>true</code> or <code>1</code>, store the file in the account in addition
+          to returning the analysis JSON.
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+              - chunk
+              - fileId
+              - chunkIndex
+              properties:
+                chunk:
+                  type: string
+                  format: binary
+                fileId:
+                  type: string
+                  description: Client-generated id for this chunked upload (same value for all chunks
+                    and assemble).
+                chunkIndex:
+                  type: string
+          application/json:
+            schema:
+              type: object
+              required:
+              - fileId
+              - assemble
+              properties:
+                fileId:
+                  type: string
+                  description: Same id used when uploading chunks.
+                assemble:
+                  type: boolean
+                  description: 'Must be <code>true</code>. Detection is shape-based: the JSON body must
+                    be at most 1KB and match this shape, otherwise it is processed as a raw JSON dump.'
+                fileName:
+                  type: string
+                  description: Optional. With <code>save=true</code>, used as the stored session's file
+                    name (extension stripped for the title) and mirrored in the response <code>data.fileName</code>
+                    / <code>data.title</code>. Ignored without save.
+      responses:
+        '200':
+          description: 'Success. Analysis result for a raw body or an assemble request; <code>{ success:
+            true }</code> for a chunk request (chunk stored, nothing analyzed yet)'
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - type: object
+                  required:
+                  - data
+                  - processorVersion
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/AnalyzeResponseData'
+                    rtcstatsId:
+                      type: string
+                      description: The rtcstats session identifier when <code>save</code> was used; otherwise
+                        absent.
+                    rtcstatsUrl:
+                      type: string
+                      description: Dashboard URL to open the rtcstats session when <code>save</code> was
+                        used; otherwise absent.
+                    processorVersion:
+                      type: string
+                      description: Version of the @rtcstats/rtcstats-processor package that produced the
+                        analysis (semver, e.g. 1.9.0). Resolved at response time.
+                    embedUrl:
+                      type: string
+                      description: URL to open the session in the embedded viewer. Only present on the
+                        Enterprise plan when <code>save</code> was used.
+                - type: object
+                  required:
+                  - success
+                  properties:
+                    success:
+                      type: boolean
+                      description: 'Returned for multipart chunk requests: the chunk was stored, no analysis
+                        has run yet.'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '402':
+          description: No credits available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '413':
+          description: File exceeds size limit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: File rejected by the parser. <code>errorCode</code> is <code>parsing_issue</code>
+            (corrupt or unsupported dump, generic message) or <code>other_issue</code> (invalid file or
+            format too old, specific message)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Unexpected processing error. A generic message is returned; internal error details
+            are not exposed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1.0/enrich:
+    post:
+      summary: Enrich
+      description: 'For a rtcstats-server or any server that only needs the observations and scores projection.
+        Processes a webrtc-internal file or a rtcstats file and returns just that projection: experience,
+        audio, video, connectivity and observations scores, per-severity observation counts, flat trimmed
+        observation records, and the user-agent data. The session is never stored.<br/><br/>Send the dump
+        the same way as <code>/upload</code>: upload the file in chunks, then send a small JSON assemble
+        request.<br/><br/>This API consumes one credit if successful.'
+      operationId: enrich
+      tags:
+      - rtcStats API
+      security:
+      - BearerAuth: []
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+              - chunk
+              - fileId
+              - chunkIndex
+              properties:
+                chunk:
+                  type: string
+                  format: binary
+                fileId:
+                  type: string
+                  description: Client-generated id for this chunked upload (same value for all chunks
+                    and assemble).
+                chunkIndex:
+                  type: string
+          application/json:
+            schema:
+              type: object
+              required:
+              - fileId
+              - assemble
+              properties:
+                fileId:
+                  type: string
+                  description: Same id used when uploading chunks.
+                assemble:
+                  type: boolean
+                  description: 'Must be <code>true</code>. Detection is shape-based: the JSON body must
+                    be at most 1KB and match this shape, otherwise it is processed as a raw JSON dump.'
+      responses:
+        '200':
+          description: 'Success. Scores and trimmed observations projection for a raw body or an assemble
+            request; <code>{ success: true }</code> for a chunk request (chunk stored, nothing analyzed
+            yet).'
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/EnrichResponse'
+                - type: object
+                  required:
+                  - success
+                  properties:
+                    success:
+                      type: boolean
+                      description: 'Returned for multipart chunk requests: the chunk was stored, no analysis
+                        has run yet.'
+        '400':
+          description: 'Invalid request: empty body, failed decompression, or no chunks found for the
+            given fileId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '402':
+          description: No credits available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: API access is not included in the account plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '413':
+          description: File exceeds size limit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: File rejected by the parser. <code>errorCode</code> is <code>parsing_issue</code>
+            (corrupt or unsupported dump, generic message) or <code>other_issue</code> (invalid file or
+            format too old, specific message)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Unexpected processing error. A generic message is returned; internal error details
+            are not exposed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1.0/mcp:
+    post:
+      summary: MCP Streamable HTTP
+      description: 'Model Context Protocol <b>Streamable HTTP</b> transport. <br/>Use an MCP client with
+        this URL. <br/>Send <code>Authorization: Bearer</code> with your application JWT on requests that
+        invoke tools. <br/>Exposes tools:<ul><li>- <code>get_quota</code></li><li>- <code>list_sessions</code></li><li>-
+        <code>get_session</code></li></ul>'
+      operationId: mcpStreamablePost
+      tags:
+      - rtcStats API
+      security:
+      - BearerAuth: []
+      requestBody:
+        description: MCP JSON-RPC payload (when applicable).
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Success (MCP Streamable HTTP)
+          headers:
+            Content-Type:
+              description: Usually `text/event-stream` for streaming responses.
+              schema:
+                type: string
+                example: text/event-stream
+            mcp-session-id:
+              description: Session identifier when the transport uses sessions (omitted in stateless mode).
+              schema:
+                type: string
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: SSE stream. Events use `data:` lines; each payload matches **McpJsonRpcSseDataLine**
+                  (JSON-RPC 2.0 response object).
+              example: 'data: {"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"2024-11-05","capabilities":{},"serverInfo":{"name":"rtcstats","version":"1.0.0"}}}
+
+
+                '
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/McpStreamableHttpTransportError'
+              examples:
+                parseError:
+                  summary: Invalid JSON or invalid JSON-RPC
+                  value:
+                    jsonrpc: '2.0'
+                    error:
+                      code: -32700
+                      message: 'Parse error: Invalid JSON'
+                    id: null
+                invalidRequest:
+                  summary: Invalid initialization batch
+                  value:
+                    jsonrpc: '2.0'
+                    error:
+                      code: -32600
+                      message: 'Invalid Request: Only one initialization request is allowed'
+                    id: null
+                unsupportedProtocol:
+                  summary: Unsupported MCP-Protocol-Version
+                  value:
+                    jsonrpc: '2.0'
+                    error:
+                      code: -32000
+                      message: 'Bad Request: Unsupported protocol version: 2099-01-01 (supported versions:
+                        2024-11-05, ...)'
+                    id: null
+        '404':
+          description: MCP Session Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/McpStreamableHttpTransportError'
+              example:
+                jsonrpc: '2.0'
+                error:
+                  code: -32001
+                  message: Session not found
+                id: null
+  /v1.0/quota:
+    get:
+      summary: Quota
+      description: Returns total allowed credits and remaining credits for the account. Include the purchased
+        credits.
+      operationId: quota
+      tags:
+      - rtcStats API
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuotaResponse'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1.0/observations:
+    get:
+      summary: List observations
+      description: Returns the list of observations the analyzer can emit.
+      operationId: observations
+      tags:
+      - rtcStats API
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObservationTypesResponse'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: API access is not included in the account plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1.0/sessions:
+    get:
+      summary: List sessions
+      description: Returns existing stored sessions for the token account ordered by creation date (newest
+        first). All filters are optional. Different filters are AND-combined; multiple values within one
+        filter are OR-combined.
+      operationId: listSessions
+      tags:
+      - rtcStats API
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: name
+        in: query
+        required: false
+        description: Filter sessions whose title contains ANY of these substrings
+        schema:
+          type: array
+          items:
+            type: string
+        style: form
+        explode: true
+      - name: observationTypes
+        in: query
+        required: false
+        description: Filter sessions that contain ANY of these observation type strings (exact type name,
+          e.g. `turnNoConfig`). Comma-separated. Only critical/high/medium observations are indexed (low/info
+          are excluded). The full catalog of types is available from GET /v1.0/observations. Up to 20
+          values.
+        schema:
+          type: array
+          items:
+            type: string
+        style: form
+        explode: true
+      - name: observationTags
+        in: query
+        required: false
+        description: 'Filter sessions whose observations carry ANY of these tags. Comma-separated. Valid
+          tags: `connectivity`, `security`, `audio`, `video`, `datachannel`, `outbound`, `inbound`, `peripheral`,
+          `behavior`, `network`, `configuration`, `cpu`, `bug`.'
+        schema:
+          type: array
+          items:
+            type: string
+        style: form
+        explode: true
+      - name: os
+        in: query
+        required: false
+        description: 'Filter sessions by operating system (exact match). Examples: `macOS`, `Windows`,
+          `Linux`, `Android`, `iPhone`, `iPad`.'
+        schema:
+          type: string
+      - name: browser
+        in: query
+        required: false
+        description: 'Filter sessions by browser (exact match). Examples: `Chrome`, `Safari`, `Firefox`,
+          `Edge`.'
+        schema:
+          type: string
+      - name: browserVersion
+        in: query
+        required: false
+        description: Filter sessions by major browser version (exact match, e.g. `142`).
+        schema:
+          type: string
+      - name: userId
+        in: query
+        required: false
+        description: Filter sessions by the end-user identifier carried in the rtcstats JWT (summary metadata
+          user).
+        schema:
+          type: string
+      - name: conferenceId
+        in: query
+        required: false
+        description: Filter sessions by the conference identifier carried in the rtcstats JWT (summary
+          metadata conference).
+        schema:
+          type: string
+      - name: sessionId
+        in: query
+        required: false
+        description: Filter sessions by the session identifier carried in the rtcstats JWT (summary metadata
+          session).
+        schema:
+          type: string
+      - name: hasCritical
+        in: query
+        required: false
+        description: When `true`, only sessions with at least one critical-severity observation.
+        schema:
+          type: boolean
+      - name: hasHigh
+        in: query
+        required: false
+        description: When `true`, only sessions with at least one high-severity observation.
+        schema:
+          type: boolean
+      - name: hasMedium
+        in: query
+        required: false
+        description: When `true`, only sessions with at least one medium-severity observation.
+        schema:
+          type: boolean
+      - name: hasLowScore
+        in: query
+        required: false
+        description: When `true`, only sessions whose experience score is low (`< 60`).
+        schema:
+          type: boolean
+      - name: hasMediumScore
+        in: query
+        required: false
+        description: When `true`, only sessions whose experience score is medium (`60` to `79`).
+        schema:
+          type: boolean
+      - name: hasHighScore
+        in: query
+        required: false
+        description: When `true`, only sessions whose experience score is high (`>= 80`).
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionsListResponse'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1.0/sessions/{rtcstatsId}:
+    parameters:
+    - name: rtcstatsId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The rtcstats session identifier
+    get:
+      summary: Retrieve Session
+      description: Returns the session detail including summary, observations and scores.
+      operationId: session
+      tags:
+      - rtcStats API
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                - rtcstatsId
+                - rtcstatsUrl
+                - processorVersion
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AnalyzeResponseData'
+                  rtcstatsId:
+                    type: string
+                    format: uuid
+                    description: The rtcstats session identifier
+                  rtcstatsUrl:
+                    type: string
+                    description: Dashboard URL to open the rtcstats session.
+                  processorVersion:
+                    type: string
+                    description: Version of the @rtcstats/rtcstats-processor package that produced the
+                      analysis (semver, e.g. 1.9.0). Resolved at response time.
+                  embedUrl:
+                    type: string
+                    description: URL to open the session in the embedded viewer. Only present on the Enterprise
+                      plan.
+        '400':
+          description: Invalid session id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Session not found for this account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Reprocess failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete session
+      description: Deletes a stored session by its identifier.
+      operationId: deleteSession
+      tags:
+      - rtcStats API
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - success
+                properties:
+                  success:
+                    type: boolean
+        '400':
+          description: Invalid id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'Use header: Authorization: Bearer <token>'
+  schemas:
+    Error:
+      type: object
+      required:
+      - error
+      - errorCode
+      properties:
+        error:
+          type: string
+        errorCode:
+          type: string
+    AnalyzeResponseData:
+      type: object
+      description: Session payload peer-connections, observations and scores.
+      additionalProperties: true
+      properties:
+        callStart:
+          type: string
+          format: date-time
+          description: First observed call activity timestamp.
+        callEnd:
+          type: string
+          format: date-time
+          description: Last observed call activity timestamp.
+        durationMs:
+          type: integer
+          description: Total call duration in milliseconds.
+        userAgentData:
+          type: object
+          description: Browser, platform, hardware and screen information.
+        pConnectionsNumber:
+          type: integer
+          description: Number of RTCPeerConnections observed during the session.
+        pConnections:
+          type: object
+          description: Per-PeerConnection details keyed by peer connection id.
+          additionalProperties:
+            type: object
+        streams:
+          type: object
+          description: Peer-stream metrics (audio, video, data) keyed by stream id.
+          additionalProperties:
+            type: object
+        transports:
+          type: object
+          description: ICE transport and candidate-pair information per PeerConnection.
+          additionalProperties:
+            type: object
+        aggregatedStats:
+          type: object
+          description: 'Session-wide aggregated metrics with self-describing keys <metric>_<scope>_<agg>_<unit>:
+            metric = jitter|rtt|bitrate|packetLoss|mos; scope = in_audio|out_audio|in_video|out_video;
+            agg = avg|min|max|p5|p95|stddev; unit = ms (jitter, rtt), kbps (bitrate), percent (packetLoss),
+            score (mos, 0-4.5, where 0 means unusable transport). Example: rtt_out_audio_avg_ms. Session-level
+            weighted averages: jitter_avg_ms, rtt_avg_ms. Stream counts: in_audio_count, out_audio_count,
+            in_video_count, out_video_count. Since schema 6.9 the former unitless keys (e.g. rtt_out_audio,
+            in_audio) are no longer present.'
+        metadata:
+          type: object
+          description: Client protocol and custom flags.
+        connectivity:
+          type: string
+          description: Resolved connectivity type for the session.
+          example: DIRECT/UDP
+        connectionIPType:
+          type: string
+          enum:
+          - IPv4
+          - IPv6
+          description: IP family of the selected connection. Absent when it could not be resolved.
+        uploadTimestamp:
+          type: string
+          format: date-time
+          description: When the dump was analyzed/processed (ISO 8601).
+        title:
+          type: string
+          description: Human-readable session title (often derived from the call URL).
+        fileName:
+          type: string
+          description: Internal name of the stored dump file.
+        fileSize:
+          type: integer
+          description: Size of the uploaded dump in bytes.
+        experienceScore:
+          type: number
+          format: float
+          description: Overall experience score (0-100). 0 when there is no media data to score against.
+        audioScore:
+          type: number
+          format: float
+          nullable: true
+          description: Audio quality score (1-5). Null when no audio stream is present.
+        videoScore:
+          type: number
+          format: float
+          nullable: true
+          description: Video quality score (1-5). Null when no video stream is present.
+        connectivityScore:
+          type: number
+          format: float
+          nullable: true
+          description: Connectivity score (1-5). Null when no peer connection produced a connectivity
+            score (e.g. no valid candidate pair).
+        observationsScore:
+          type: integer
+          description: Aggregated severity score derived from observations. Maximum (40) when no observations
+            were produced; lower as severity penalties are applied.
+        tagClouds:
+          type: array
+          description: Tag-cloud entries derived from the session.
+          items:
+            type: object
+            required:
+            - tag
+            - total
+            properties:
+              tag:
+                type: string
+              total:
+                type: number
+              severity:
+                type: string
+                description: Optional severity bucket for the tag.
+        id:
+          type: string
+          format: uuid
+          description: Session identifier (same as rtcstatsId).
+        created_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Row creation timestamp. Null on `POST /analyze` without `?save=true` (the dump
+            is not persisted).
+        uploaded_by:
+          type: string
+          format: uuid
+          nullable: true
+          description: Identifier of the account/user that uploaded the dump. Null on `POST /analyze`
+            without `?save=true`.
+        uploaded_by_email:
+          type: string
+          format: email
+          nullable: true
+          description: Email of the uploader. Null on `POST /analyze` without `?save=true`.
+        public_link:
+          type: string
+          nullable: true
+          description: Share token for the public viewer.
+        description:
+          type: string
+          nullable: true
+          description: Optional free-text description.
+        tags:
+          type: array
+          description: User-defined tags attached to the session.
+          items:
+            type: string
+        observations:
+          type: array
+          description: Detected issues and insights. Each entry is an observation with a type, a severity,
+            a category, a source object identifying what it concerns, and optional supporting values/indicators.
+          items:
+            type: object
+            description: A single detected observation.
+            properties:
+              type:
+                type: string
+                description: Observation type key, e.g. 'turnNoConfig', 'unusedStream', 'framesDropped'.
+                  The full catalog (with possible severities and tags) is available from GET /v1.0/observations.
+              severity:
+                type: string
+                enum:
+                - critical
+                - high
+                - medium
+                - low
+                - info
+                description: Severity of the observation.
+              category:
+                type: string
+                enum:
+                - connections
+                - streams
+                - devices
+                - datachannels
+                - logs
+                - pairs
+                description: Category the observation belongs to.
+              source:
+                type: object
+                description: 'Identifies what the observation concerns. Which properties are present depends
+                  on the category (connections: pid; pairs: pid+cpid; streams: pid+sid+ssrcId; datachannels:
+                  pid+sid; devices: did+rid+timestamp+labelId; logs: pid). Routing/matching uses pid/sid/cpid/did+timestamp;
+                  ssrcId and labelId are display identifiers.'
+                properties:
+                  pid:
+                    type: string
+                    description: Peer-connection id.
+                  sid:
+                    type: string
+                    description: Stream or datachannel report id (the W3C stats report dictionary id).
+                  cpid:
+                    type: string
+                    description: Candidate-pair id.
+                  did:
+                    type: string
+                    description: Device entry id.
+                  rid:
+                    type: string
+                    description: Device row index, as a string.
+                  timestamp:
+                    type: string
+                    description: Device entry time, an ISO-like date string.
+                  ssrcId:
+                    type: integer
+                    format: int64
+                    description: Stream SSRC (W3C RTCRtpStreamStats.ssrc, unsigned long).
+                  labelId:
+                    type: string
+                    description: Device human name.
+              label:
+                deprecated: true
+                description: 'DEPRECATED, removed in the next schema version. Overloaded legacy identifier
+                  whose runtime type is polymorphic: a number (the numeric SSRC) for stream observations,
+                  a string (the datachannel report id) for datachannels, a string (the device name) for
+                  device observations. No fixed type is declared because the runtime type varies by category.
+                  Read source.ssrcId / source.sid / source.labelId instead.'
+              tags:
+                type: array
+                items:
+                  type: string
+                description: Tags attached to the observation (e.g. network, audio, video, connectivity,
+                  security).
+              url:
+                type: string
+                description: Related URL when applicable (e.g. the TURN server URL).
+              firstSeenAt:
+                type: integer
+                format: int64
+                description: Epoch timestamp (ms) of the first occurrence of the observation, truncated
+                  to a whole millisecond.
+              valueInCount:
+                type: number
+                description: Observation value as a count (e.g. number of duplicated lines or occurrences).
+              averageInMs:
+                type: number
+                description: Average value in milliseconds (e.g. jitter, rtt, encode/decode time).
+              maxInMs:
+                type: number
+                description: Maximum value in milliseconds.
+              valueInPercent:
+                type: number
+                description: Observation value as a percentage (e.g. audio/video loss, frames dropped).
+              durationInPercent:
+                type: number
+                description: Duration of the observation as a percentage of the call.
+              durationInMs:
+                type: number
+                description: Duration in milliseconds (e.g. TURN/STUN delay, signaling time).
+              durationInSeconds:
+                type: number
+                description: Duration in seconds.
+              indicators:
+                type: object
+                description: Supporting indicators (e.g. min, max, average, stddev).
+              meaning:
+                type: string
+                description: Human-readable meaning of the observation (used by the AI summary).
+              property:
+                type: string
+                description: The specific property the observation refers to (e.g. audioLevel).
+        features:
+          type: object
+          description: Boolean and value flags about devices, network and capabilities used during the
+            session.
+        observationsCount:
+          type: object
+          description: Counts of observations grouped by severity (critical, high, medium, low, info).
+        aiSummary:
+          type: object
+          nullable: true
+          description: 'AI-generated session summary. Always `null` on `POST /analyze` responses and while
+            background generation is pending or plan-gated. Stable `summary` fields: `highlight`, `network`,
+            `media`, `user` (markdown strings) and `networkScore`, `mediaScore`, `userScore` (one of excellent,
+            good, acceptable, poor, bad, mediocre). Other fields may appear and are subject to change
+            without notice. Use them with care.'
+          properties:
+            model:
+              type: string
+              description: Model id used for generation (e.g. anthropic/claude-haiku-4.5).
+            summary:
+              type: object
+              description: AI-authored summary. Extra undocumented fields may appear and are subject to
+                change.
+              additionalProperties: true
+              properties:
+                highlight:
+                  type: string
+                  description: One-line overall summary (markdown).
+                network:
+                  type: string
+                  description: Network and connectivity analysis (markdown).
+                networkScore:
+                  type: string
+                  description: 'Qualitative network rating: excellent, good, acceptable, poor, bad or
+                    mediocre.'
+                media:
+                  type: string
+                  description: Audio/video quality analysis (markdown).
+                mediaScore:
+                  type: string
+                  description: Qualitative media rating (same values as networkScore).
+                user:
+                  type: string
+                  description: Device and local-user analysis (markdown).
+                userScore:
+                  type: string
+                  description: Qualitative user-side rating (same values as networkScore).
+            version:
+              type: string
+              description: AI prompt configuration version used for generation.
+    EnrichResponse:
+      type: object
+      description: 'POST /v1.0/enrich response: the scores and observations projection, plus the processor
+        version and a generation timestamp.'
+      required:
+      - data
+      - processorVersion
+      - generatedAt
+      properties:
+        data:
+          $ref: '#/components/schemas/EnrichData'
+        processorVersion:
+          type: string
+          description: Version of the @rtcstats/rtcstats-processor package that produced the analysis
+            (semver, e.g. 1.9.0).
+        generatedAt:
+          type: integer
+          format: int64
+          description: Unix epoch time in milliseconds when the response was generated.
+    EnrichData:
+      type: object
+      description: Scores, per-severity observation counts, trimmed observations, and user-agent data.
+        No stored-session fields.
+      required:
+      - scores
+      - observationsCount
+      - observations
+      - userAgentData
+      properties:
+        scores:
+          $ref: '#/components/schemas/Scores'
+        observationsCount:
+          $ref: '#/components/schemas/ObservationsCount'
+        observations:
+          type: array
+          description: Flat, SQL-friendly observation records. Absent or non-finite values are omitted,
+            never null.
+          items:
+            $ref: '#/components/schemas/Observation'
+        userAgentData:
+          type: object
+          additionalProperties: true
+          description: Browser, platform, hardware and screen information. Empty object when the dump
+            carries none.
+    Scores:
+      type: object
+      description: The five scores produced by the analyzer. Each is a number or null.
+      required:
+      - experienceScore
+      - audioScore
+      - videoScore
+      - connectivityScore
+      - observationsScore
+      properties:
+        experienceScore:
+          type: number
+          format: float
+          nullable: true
+          description: Overall experience score (0-100). Null when there is no media data to score against.
+        audioScore:
+          type: number
+          format: float
+          nullable: true
+          description: Audio quality score (1-5). Null when no audio stream is present.
+        videoScore:
+          type: number
+          format: float
+          nullable: true
+          description: Video quality score (1-5). Null when no video stream is present.
+        connectivityScore:
+          type: number
+          format: float
+          nullable: true
+          description: Connectivity score (1-5). Null when no peer connection produced a connectivity
+            score.
+        observationsScore:
+          type: number
+          nullable: true
+          description: Aggregated severity score derived from observations. Null when unavailable.
+    ObservationsCount:
+      type: object
+      description: Observation counts grouped by severity. The five values sum to the length of the observations
+        array.
+      required:
+      - critical
+      - high
+      - medium
+      - low
+      - info
+      properties:
+        critical:
+          type: integer
+        high:
+          type: integer
+        medium:
+          type: integer
+        low:
+          type: integer
+        info:
+          type: integer
+    Observation:
+      type: object
+      description: 'A single trimmed observation: flat and SQL-friendly. Only type and severity are always
+        present; every other field is included only when it has a finite value, never as null.'
+      required:
+      - type
+      - severity
+      properties:
+        type:
+          type: string
+          description: Observation type key, e.g. 'turnNoConfig'. The full catalog is available from GET
+            /v1.0/observations.
+        severity:
+          type: string
+          enum:
+          - critical
+          - high
+          - medium
+          - low
+          - info
+          description: Severity of the observation.
+        category:
+          type: string
+          enum:
+          - connections
+          - streams
+          - devices
+          - datachannels
+          - logs
+          - pairs
+          description: Category the observation belongs to.
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags attached to the observation (e.g. network, audio, video, connectivity, security).
+        firstSeenAt:
+          type: integer
+          format: int64
+          description: Epoch timestamp (ms) of the first occurrence, truncated to a whole millisecond.
+            Omitted when unknown or non-finite.
+        url:
+          type: string
+          description: Related URL when applicable (e.g. the TURN server URL).
+        property:
+          type: string
+          description: The specific property the observation refers to (e.g. audioLevel).
+        valueInCount:
+          type: number
+          description: Observation value as a count (e.g. number of duplicated lines or occurrences).
+        valueInPercent:
+          type: number
+          description: Observation value as a percentage (e.g. audio/video loss, frames dropped).
+        averageInMs:
+          type: number
+          description: Average value in milliseconds (e.g. jitter, rtt, encode/decode time).
+        maxInMs:
+          type: number
+          description: Maximum value in milliseconds.
+        durationInMs:
+          type: number
+          description: Duration in milliseconds (e.g. TURN/STUN delay, signaling time).
+        durationInSeconds:
+          type: number
+          description: Duration in seconds.
+        durationInPercent:
+          type: number
+          description: Duration of the observation as a percentage of the call.
+    McpStreamableHttpTransportError:
+      type: object
+      description: JSON-RPC 2.0 envelope returned by the MCP Streamable HTTP transport for **HTTP-level**
+        failures (before or outside the SSE stream). This is not the same shape as tool errors from `tools/call`,
+        which are delivered with HTTP 200 inside the stream as JSON-RPC responses.
+      required:
+      - jsonrpc
+      - error
+      - id
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+          - '2.0'
+        error:
+          type: object
+          required:
+          - code
+          - message
+          properties:
+            code:
+              type: integer
+              description: 'JSON-RPC error code. Common values: **-32700** (parse error / invalid message),
+                **-32600** (invalid request, e.g. init rules), **-32000** (bad request: protocol version,
+                missing session header, server not initialized), **-32001** (session not found).'
+            message:
+              type: string
+            data:
+              description: Optional extra detail (e.g. parse failure).
+        id:
+          nullable: true
+          description: Always `null` for transport-level errors.
+    McpJsonRpcSseDataLine:
+      type: object
+      description: One JSON object carried in a single SSE `data:` line after a successful POST that contained
+        JSON-RPC **requests**. Either `result` (success) or `error` (failure) is present; `id` matches
+        the client request.
+      required:
+      - jsonrpc
+      - id
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+          - '2.0'
+        id:
+          description: Request id (string or number) from the client; omitted only for responses that
+            omit id per JSON-RPC rules.
+        result:
+          description: Success payload (e.g. `initialize`, `tools/list`, `tools/call` with `content` /
+            `structuredContent`).
+        error:
+          type: object
+          description: JSON-RPC error for this request id (e.g. MCP or tool failure).
+          properties:
+            code:
+              type: integer
+            message:
+              type: string
+            data: {}
+    QuotaResponse:
+      type: object
+      required:
+      - accountName
+      - accountPlan
+      - allowedCredits
+      - remainingCredits
+      properties:
+        accountName:
+          type: string
+          description: Account display name.
+        accountPlan:
+          type: string
+          enum:
+          - developer
+          - trial_developer
+          - enterprise
+          description: Effective plan for the account.
+        allowedCredits:
+          type: number
+          description: Total credits allowed for the account (monthly allocation plus purchased)
+        remainingCredits:
+          type: number
+          description: Credits available.
+    ObservationTypesResponse:
+      type: object
+      required:
+      - total
+      - data
+      properties:
+        total:
+          type: integer
+          description: Number of observation types in the catalog.
+        data:
+          type: array
+          description: Catalog of observation types, sorted by `type`.
+          items:
+            type: object
+            required:
+            - type
+            - title
+            - severity
+            - tags
+            properties:
+              type:
+                type: string
+                description: Unique identifier type of the observation, e.g. 'cpuPressure'.
+              title:
+                type: string
+                description: Human-readable title.
+              severity:
+                type: array
+                items:
+                  type: string
+                  enum:
+                  - critical
+                  - high
+                  - medium
+                  - low
+                  - info
+                description: All severities this observation type can emit.
+              tags:
+                type: array
+                items:
+                  type: string
+                  enum:
+                  - connectivity
+                  - security
+                  - audio
+                  - video
+                  - datachannel
+                  - outbound
+                  - inbound
+                  - peripheral
+                  - behavior
+                  - network
+                  - configuration
+                  - cpu
+                  - bug
+                description: All tags this observation type can carry.
+      example:
+        total: 2
+        data:
+        - type: cpuPressure
+          title: CPU pressure
+          severity:
+          - high
+          - medium
+          tags:
+          - cpu
+          - connectivity
+        - type: speakerDelay
+          title: Delay in playing audio
+          severity:
+          - medium
+          tags:
+          - audio
+          - inbound
+          - peripheral
+    SessionListItem:
+      type: object
+      required:
+      - rtcstatsId
+      - createdAt
+      - sessionStart
+      - sessionEnd
+      - title
+      - rtcstatsUrl
+      - abstract
+      properties:
+        rtcstatsId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+          description: When the session row was created.
+        sessionStart:
+          type: string
+          nullable: true
+          description: Call start from summary when available.
+        sessionEnd:
+          type: string
+          nullable: true
+          description: Call end from summary when available.
+        title:
+          type: string
+        rtcstatsUrl:
+          type: string
+          description: Dashboard URL to open the rtcstats session.
+        embedUrl:
+          type: string
+          description: URL to open the session in the embedded viewer. Only present on the Enterprise
+            plan.
+        abstract:
+          nullable: true
+          allOf:
+          - $ref: '#/components/schemas/SessionAbstract'
+          description: Denormalized session summary used to drive the list filters. <code>null</code>
+            for rows that have not been indexed yet.
+    SessionAbstract:
+      type: object
+      description: Denormalized session summary returned alongside each session in the list so clients
+        can render badges or compute their own filters without a second call. <code>observationTypes</code>
+        matches the <code>observationTypes</code> filter input. Every property is always present.
+      required:
+      - observationTypes
+      - observationTags
+      - browser
+      - browserVersion
+      - os
+      - osVersion
+      - conferenceId
+      - sessionId
+      - userId
+      - experienceScore
+      - connectivity
+      - observationsCritical
+      - observationsHigh
+      - observationsMedium
+      - scoreBand
+      properties:
+        observationTypes:
+          type: array
+          items:
+            type: string
+          description: Unique observation type names with severity critical/high/medium.
+        observationTags:
+          type: array
+          items:
+            type: string
+          description: Unique tags carried by critical/high/medium observations only.
+        browser:
+          type: string
+          nullable: true
+        browserVersion:
+          type: string
+          nullable: true
+          description: Major browser version only (e.g. <code>142</code>).
+        os:
+          type: string
+          nullable: true
+        osVersion:
+          type: string
+          nullable: true
+        conferenceId:
+          type: string
+          nullable: true
+        sessionId:
+          type: string
+          nullable: true
+        userId:
+          type: string
+          nullable: true
+        experienceScore:
+          type: number
+          nullable: true
+        connectivity:
+          type: string
+          nullable: true
+        observationsCritical:
+          type: integer
+          minimum: 0
+        observationsHigh:
+          type: integer
+          minimum: 0
+        observationsMedium:
+          type: integer
+          minimum: 0
+        scoreBand:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+          - unrated
+          description: 'Experience-score band: <code>high</code> (>= 80), <code>medium</code> (60..79),
+            <code>low</code> (< 60), or <code>unrated</code> when there is no score.'
+    SessionsListResponse:
+      type: object
+      required:
+      - total
+      - data
+      properties:
+        total:
+          type: integer
+          minimum: 0
+          description: Number of sessions in <code>data</code>.
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SessionListItem'

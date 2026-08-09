@@ -1,13 +1,29 @@
 name: rtcStats
-description: >-
-  SaaS for developers to troubleshoot and monitor WebRTC applications. Users upload webrtc-internals/rtcstats dumps or
-  stream stats to receive metrics, Observations, Deductions, an Experience Score, and an AI root-cause summary. Offers a
-  REST API, a hosted MCP server, and an open-source collection SDK/collector.
+description: SaaS for developers to troubleshoot and monitor WebRTC applications. Users upload webrtc-internals/rtcstats
+  dumps or stream stats to receive metrics, Observations, Deductions, an Experience Score, and an AI root-cause
+  summary. Offers a REST API, a hosted MCP server, and an open-source collection SDK/collector.
 url: https://rtcstats.apievangelist.com/apis.yml
 created: '2026-08-09'
 modified: '2026-08-09'
 specificationVersion: '0.21'
 tags:
+- webrtc
+- observability
+- monitoring
+- debugging
+- real-time-communications
+- video
+- voice
+- ai
+- mcp
+- developer-tools
+apis:
+- name: rtcStats REST API
+  description: REST API (v1.0) for uploading dumps, analyzing WebRTC stats, managing sessions, checking quota, and
+    MCP access. Bearer JWT auth via application token (paid plans).
+  humanURL: https://rtcstats.com/api-docs
+  baseURL: https://api.rtcstats.com/v1.0
+  tags:
   - webrtc
   - observability
   - monitoring
@@ -18,40 +34,118 @@ tags:
   - ai
   - mcp
   - developer-tools
-apis:
-  - name: rtcStats REST API
-    description: >-
-      REST API (v1.0) for uploading dumps, analyzing WebRTC stats, managing sessions, checking quota, and MCP access.
-      Bearer JWT auth via application token (paid plans).
-    humanURL: https://rtcstats.com/api-docs
-    baseURL: https://api.rtcstats.com/v1.0
-    tags:
-      - webrtc
-      - observability
-      - monitoring
-      - debugging
-      - real-time-communications
-      - video
-      - voice
-      - ai
-      - mcp
-      - developer-tools
-    properties:
-      - type: OpenAPI
-        url: https://rtcstats.com/api/openapi
-      - type: Documentation
-        url: https://rtcstats.com/api-docs
-      - type: Documentation
-        url: https://rtcstats.com/api-docs.md
-      - type: LLMsTxt
-        url: https://rtcstats.com/llms.txt
-      - type: MCPServer
-        url: https://api.rtcstats.com/v1.0/mcp
+  properties:
+  - type: OpenAPI
+    url: https://rtcstats.com/api/openapi
+  - type: Documentation
+    url: https://rtcstats.com/api-docs
+  - type: Documentation
+    url: https://rtcstats.com/api-docs.md
+  - type: LLMsTxt
+    url: https://rtcstats.com/llms.txt
+  - type: MCPServer
+    url: https://api.rtcstats.com/v1.0/mcp
+  - type: OpenAPI
+    url: openapi/rtcstats-api-openapi.yml
+  - type: APIReference
+    url: https://rtcstats.com/api-docs.md
+  - type: GettingStarted
+    url: https://rtcstats.com/kb/getting-started
+  - type: MCPServer
+    url: mcp/rtcstats-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/rtcstats-tool-crosswalk.yml
+  - type: LLMsTxt
+    url: llms/rtcstats-llms.txt
+  - type: Overlay
+    url: overlays/rtcstats-api-overlay.yaml
+  - type: Authentication
+    url: authentication/rtcstats-authentication.yml
+  - type: Conventions
+    url: conventions/rtcstats-conventions.yml
+  - type: ErrorCatalog
+    url: errors/rtcstats-problem-types.yml
+  - type: DataModel
+    url: data-model/rtcstats-data-model.yml
+  - type: RateLimits
+    url: rate-limits/rtcstats-rate-limits.yml
 maintainers:
-  - FN: rtcStats
-    url: https://rtcstats.com
+- FN: rtcStats
+  url: https://rtcstats.com
+  email: support@rtcstats.com
 generated:
   by: apis.io/add
   model: claude-opus-4-8
   confidence: 92
   at: '2026-08-09T14:08:11.996Z'
+common:
+- type: AgenticAccess
+  url: agentic-access/rtcstats-agentic-access.yml
+- type: DomainSecurity
+  url: security/rtcstats-domain-security.yml
+- type: Authentication
+  url: authentication/rtcstats-authentication.yml
+- type: Packages
+  url: packages/rtcstats-packages.yml
+- type: SDKs
+  url: packages/rtcstats-packages.yml
+- type: MCPServer
+  url: mcp/rtcstats-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/rtcstats-tool-crosswalk.yml
+- type: LLMsTxt
+  url: llms/rtcstats-llms.txt
+- type: Overlay
+  url: overlays/rtcstats-api-overlay.yaml
+- type: Conformance
+  url: conformance/rtcstats-conformance.yml
+- type: ErrorCatalog
+  url: errors/rtcstats-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/rtcstats-lifecycle.yml
+- type: Conventions
+  url: conventions/rtcstats-conventions.yml
+- type: ChangeLog
+  url: changelog/rtcstats-changelog.yml
+- type: Components
+  url: components/rtcstats-components.yml
+- type: DataModel
+  url: data-model/rtcstats-data-model.yml
+- type: RateLimits
+  url: rate-limits/rtcstats-rate-limits.yml
+- type: Plans
+  url: plans/rtcstats-plans.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: DeveloperPortal
+  url: https://rtcstats.com/api-docs
+- type: Documentation
+  url: https://rtcstats.com/kb
+- type: APIReference
+  url: https://rtcstats.com/api-docs.md
+- type: GettingStarted
+  url: https://rtcstats.com/kb/getting-started
+- type: Support
+  url: https://rtcstats.com/support
+- type: Blog
+  url: https://rtcstats.com/blog
+- type: ChangeLog
+  url: https://rtcstats.com/blog/category/release
+- type: GitHubOrganization
+  url: https://github.com/rtcstats
+- type: SourceCode
+  url: https://github.com/rtcstats/rtcstats
+- type: Pricing
+  url: https://rtcstats.com/pricing
+- type: SignUp
+  url: https://rtcstats.com/register
+- type: TermsOfService
+  url: https://rtcstats.com/tos
+- type: PrivacyPolicy
+  url: https://rtcstats.com/privacy
+image: https://rtcstats.com/opengraph-image.png
+x-enrichment:
+  date: '2026-08-09'
+  status: enriched
+  artifacts_added: 21
+  pass: local-v1

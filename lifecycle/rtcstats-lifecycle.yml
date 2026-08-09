@@ -1,0 +1,68 @@
+generated: '2026-08-09'
+method: searched
+source: https://rtcstats.com/api-docs.md + https://rtcstats.com/tos + https://rtcstats.com/blog/category/release
+description: >-
+  rtcStats versions its REST API in the URI path (v1.0) and versions the product
+  on a monthly minor cadence announced on the blog. There is no separate
+  versioning or deprecation policy document, no Sunset/Deprecation header
+  support, no status page and — stated explicitly in the Terms of Service — no
+  service-level agreement for most services.
+versioning:
+  scheme: uri-path
+  current: v1.0
+  example: https://api.rtcstats.com/v1.0/sessions
+  policy_url: null
+  detail: >-
+    A single API version has shipped. Separately, the analysis payload carries
+    its own schema version (documented in llms.txt as schema 6.3, with a note
+    that schema 6.9 removed the former unitless aggregate keys such as
+    rtt_out_audio and in_audio), and every analysis response reports
+    processorVersion — the @rtcstats/rtcstats-processor semver, e.g. 1.9.0.
+product_versioning:
+  scheme: semver-minor-monthly
+  current: '1.9'
+  released: '2026-08-03'
+  announcement_channel: https://rtcstats.com/blog/category/release
+  detail: changelog/rtcstats-changelog.yml
+deprecation:
+  policy_url: null
+  sunset_header: false
+  deprecation_header: false
+  notice_period: >-
+    None published for API or feature changes. The Terms of Service commit to at
+    least 30 days notice by email for pricing changes only.
+  documented_deprecations:
+    - field: data.observations[].label
+      status: deprecated
+      replacement: source.ssrcId / source.sid / source.labelId
+      source: https://rtcstats.com/llms.txt
+    - field: aggregatedStats unitless keys (e.g. rtt_out_audio, in_audio)
+      status: removed
+      removed_in: analysis schema 6.9
+      source: https://rtcstats.com/llms.txt
+  stability_warning: >-
+    The docs state only the documented fields are stable and other fields "may
+    appear and are subject to change without notice."
+deprecated_operations: []
+sla:
+  url: https://rtcstats.com/tos
+  uptime_target: null
+  detail: 'Terms of Service, effective 2025-09-02: "We do not offer service-level agreements for most of our Services."'
+status_page: null
+status_page_probes:
+  - {url: 'https://status.rtcstats.com', result: DNS does not resolve}
+  - {url: 'https://rtcstats.com/status', status: 404}
+data_retention:
+  free: 1 month
+  developer: 3 months
+  enterprise: 3 months
+  account_deletion: Deleted account content is purged within 60 days (privacy policy, effective 2025-09-02).
+  source: https://rtcstats.com/pricing
+support:
+  email: support@rtcstats.com
+  form: https://rtcstats.com/support
+  knowledge_base: https://rtcstats.com/kb
+  github_issues: https://github.com/rtcstats/rtcstats/issues
+gaps:
+  - No status page — an incident channel is the single largest operational-transparency gap for an observability vendor.
+  - No deprecation policy and no Sunset/Deprecation header support (RFC 8594), even though field-level deprecations are already being made.

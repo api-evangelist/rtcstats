@@ -1,0 +1,82 @@
+generated: '2026-08-09'
+method: derived
+source: openapi/rtcstats-api-openapi.yml + https://rtcstats.com/api-docs.md
+format: custom-json
+rfc9457: false
+description: >-
+  rtcStats returns a two-field JSON error envelope — {"error": "<message>",
+  "errorCode": "<code>"} — on every REST failure. It is not RFC 9457
+  application/problem+json: there is no type URI, no title/detail split and no
+  instance. The provider publishes no standalone error-code reference page, so
+  the catalog below is derived from the OpenAPI responses and the API reference;
+  the only errorCode values the docs name explicitly are the two 415 parser
+  codes.
+envelope:
+  content_type: application/json
+  fields:
+    - {name: error, type: string, required: true, description: Human-readable message}
+    - {name: errorCode, type: string, required: true, description: Machine-readable code}
+  schema: openapi/rtcstats-api-openapi.yml#/components/schemas/Error
+problems:
+  - status: 400
+    title: Invalid request
+    description: Malformed request — empty body, failed decompression, no chunks found for the given fileId, or an invalid session id.
+    operations: [upload, analyze, enrich, session, deleteSession, mcpStreamablePost]
+    remediation: 'Check the request body shape and, for the chunked flow, that chunks were uploaded under the same fileId before assembling.'
+  - status: 401
+    title: Missing or invalid token
+    description: No Authorization header, or the application JWT is invalid or expired.
+    operations: [upload, analyze, enrich, quota, observations, listSessions, session, deleteSession]
+    remediation: 'Send `Authorization: Bearer <application JWT>`. Tokens are created in Settings > Applications and are shown only once; create a new application if lost.'
+  - status: 402
+    title: No credits available
+    description: The account has exhausted both its monthly credit allowance and any purchased top-up credits.
+    operations: [upload, analyze, enrich]
+    remediation: 'Read GET /v1.0/quota (or the get_quota MCP tool) for remainingCredits; purchase top-up credits or wait for the monthly reset. Monthly credits do not roll over.'
+  - status: 403
+    title: API access is not included in the account plan
+    description: The account plan does not include API (or MCP) access.
+    operations: [enrich, observations]
+    remediation: API and MCP access require the Developer plan or above.
+  - status: 404
+    title: Not found
+    description: 'Session not found for this account, or MCP session not found on the Streamable HTTP transport.'
+    operations: [session, deleteSession, mcpStreamablePost]
+    remediation: Confirm the rtcstatsId belongs to the token's account.
+  - status: 413
+    title: File exceeds size limit
+    description: The uploaded dump is larger than the plan's maximum file size.
+    operations: [upload, analyze, enrich]
+    remediation: 'Use the chunked multipart flow for dumps above the ~4.5MB request-body cap; the absolute ceiling is plan-dependent.'
+  - status: 415
+    title: File rejected by the parser
+    description: The dump could not be parsed.
+    error_codes:
+      - {code: parsing_issue, meaning: 'Corrupt or unsupported dump; a generic message is returned'}
+      - {code: other_issue, meaning: 'Invalid file or a format that is too old; a specific message is returned'}
+    operations: [upload, analyze, enrich]
+    remediation: 'Re-export the webrtc-internals or rtcstats dump; very old dump formats are rejected.'
+  - status: 422
+    title: Reprocess failed
+    description: Reprocessing an existing session failed.
+    operations: [session]
+  - status: 500
+    title: Unexpected processing error
+    description: A generic message is returned; internal error details are deliberately not exposed.
+    operations: [upload, analyze, enrich, quota, listSessions, session, deleteSession]
+mcp_errors:
+  transport:
+    schema: openapi/rtcstats-api-openapi.yml#/components/schemas/McpStreamableHttpTransportError
+    description: >-
+      JSON-RPC 2.0 envelope returned for HTTP-level MCP failures (before or
+      outside the SSE stream). `id` is always null. Statuses observed in the
+      OpenAPI - 400 Bad request, 404 MCP session not found.
+  tool:
+    description: >-
+      Tool failures are NOT transport errors — they are delivered with HTTP 200
+      inside the stream as JSON-RPC responses carrying an `error` object
+      {code, message, data} whose id matches the client request.
+    schema: openapi/rtcstats-api-openapi.yml#/components/schemas/McpJsonRpcSseDataLine
+gaps:
+  - No published error-code reference page; the errorCode value space is undocumented apart from parsing_issue and other_issue.
+  - Not RFC 9457 — no application/problem+json media type and no stable type URIs an agent could switch on.

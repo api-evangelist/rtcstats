@@ -1,0 +1,147 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+provider: rtcStats
+providerId: rtcstats
+generated: '2026-08-09'
+method: searched
+created: '2026-08-09'
+modified: '2026-08-09'
+sources:
+- https://rtcstats.com/pricing
+- https://rtcstats.com/kb/usage-and-billing/credits-in-rtcstats
+description: Three published tiers metered in credits (1 credit = 1 file analyzed), plus non-expiring
+  top-up credit packs. API and MCP access begin at the Developer tier. Annual billing saves 17%.
+currency: USD
+plans:
+- id: rtcstats-free
+  name: Free
+  type: freemium
+  price: 0
+  timeFrame: month
+  description: Explore and debug on your own. No expiration.
+  entries:
+  - label: Monthly credits
+    name: credits
+    type: limit
+    metric: file analyzed
+    limit: 10
+    timeFrame: month
+  - label: Team members
+    name: seats
+    type: limit
+    limit: 3
+    timeFrame: month
+  - label: Data retention
+    name: retention
+    type: feature
+    value: 1 month
+  - label: Full analysis
+    name: full_analysis
+    type: feature
+    value: Month 1 only
+  - label: API access
+    name: api
+    type: feature
+    value: not included
+  - label: MCP access
+    name: mcp
+    type: feature
+    value: not included
+- id: rtcstats-developer
+  name: Developer
+  type: subscription
+  price: 239
+  priceAnnualMonthly: 199
+  timeFrame: month
+  description: Root-cause analysis for every session. The first tier with API and MCP access.
+  entries:
+  - label: Monthly credits
+    name: credits
+    type: limit
+    metric: file analyzed
+    limit: 500
+    timeFrame: month
+  - label: Team members
+    name: seats
+    type: limit
+    limit: 10
+    timeFrame: month
+  - label: Data retention
+    name: retention
+    type: feature
+    value: 3 months
+  - label: Experience Score, Observations, Deductions, AI summaries
+    name: analysis
+    type: feature
+    value: included
+  - label: API access
+    name: api
+    type: feature
+    value: included
+  - label: MCP access
+    name: mcp
+    type: feature
+    value: included
+- id: rtcstats-enterprise
+  name: Enterprise
+  type: subscription
+  price: 1199
+  priceAnnualMonthly: 999
+  timeFrame: month
+  description: WebRTC observability at scale.
+  entries:
+  - label: Monthly credits
+    name: credits
+    type: limit
+    metric: file analyzed
+    limit: 5000
+    timeFrame: month
+  - label: Team members
+    name: seats
+    type: limit
+    limit: 50
+    timeFrame: month
+  - label: Data retention
+    name: retention
+    type: feature
+    value: 3 months
+  - label: Embeddable viewer
+    name: embed
+    type: feature
+    value: included (embedUrl returned; embedding feature must be active on the account)
+  - label: 3rd party storage
+    name: byo_storage
+    type: feature
+    value: included
+  - label: Whitelabel sharing
+    name: whitelabel
+    type: feature
+    value: included
+  - label: API access
+    name: api
+    type: feature
+    value: included
+  - label: MCP access
+    name: mcp
+    type: feature
+    value: included
+top_ups:
+- id: rtcstats-topup-5k
+  credits: 5000
+  price: 100
+  rollover: true
+- id: rtcstats-topup-50k
+  credits: 50000
+  price: 500
+  rollover: true
+- id: rtcstats-topup-500k
+  credits: 500000
+  price: 2500
+  rollover: true
+notes:
+- Annual billing is advertised as "Save 17%" — Developer $199/mo and Enterprise $999/mo billed annually
+  vs $239/mo and $1,199/mo monthly.
+- Purchased top-up credits never expire but are voided on downgrade to Free.
+- 'No usage-based overage: exceeding the credit balance returns HTTP 402 rather than billing extra.'
+- No SLA on any tier — the Terms of Service state service-level agreements are not offered for most
+  services.

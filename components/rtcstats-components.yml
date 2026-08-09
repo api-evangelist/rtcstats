@@ -1,0 +1,46 @@
+generated: '2026-08-09'
+method: searched
+source: https://rtcstats.com/pricing + https://github.com/rtcstats/embed-viewer + https://rtcstats.com/llms.txt
+description: rtcStats ships one embeddable client-side surface — the session viewer — plus a browser
+  collection library. The embeddable viewer renders a full rtcStats session analysis inside the customer’s
+  own application; it is an Enterprise-plan feature gated twice, once by plan and once by an embedding
+  feature flag on the account.
+families:
+  embedded_viewer:
+    description: Displays rtcStats session analysis directly within your own application.
+    plan: Enterprise
+    components:
+    - name: Embeddable session viewer
+      id: embed-viewer
+      repository: https://github.com/rtcstats/embed-viewer
+      description: Renders the full analysis for one session (metrics, observations, deductions, experience
+        score, AI summary) inside a host application.
+      activation: The API returns an embedUrl field on session responses. embedUrl is omitted entirely
+        from responses on non-Enterprise plans; on Enterprise it is always computed, but access to the
+        embedded view is additionally authorized only when the embedding feature is active for the account.
+      api_field: data.embedUrl / embedUrl on GET /v1.0/sessions/{rtcstatsId} and list_sessions rows
+  sharing_surfaces:
+    description: Publicly shareable, no-account analysis pages produced by the product.
+    components:
+    - name: Public share link
+      id: share
+      url_form: https://rtcstats.com/share/<token>
+      description: A read-only hosted analysis page for one session that anyone can open without an
+        account. Used across the public showcase gallery. Whitelabel sharing is an Enterprise feature.
+      robots: Disallowed in robots.txt (/share/) so shared sessions are not indexed.
+  collection_library:
+    description: Browser-side JavaScript loaded into the customer’s WebRTC application. Catalogued in
+      packages/ as an SDK; listed here because it is a client-side component, not a server SDK.
+    components:
+    - name: rtcstats-js
+      id: rtcstats-js
+      package: '@rtcstats/rtcstats-js'
+      description: Wraps RTCPeerConnection, gathers WebRTC API traces and periodic getStats output and
+        ships them to a collector. MIT.
+    - name: Chrome extension
+      id: extension
+      repository: https://github.com/rtcstats/rtcstats
+      description: Browser extension in the open-source monorepo (extension/) for capturing dumps.
+notes:
+- No design system, web-component library or embeddable checkout/form surface — the component surface
+  is the viewer and the collector.

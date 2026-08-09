@@ -1,0 +1,89 @@
+generated: '2026-08-09'
+method: searched
+status: published
+source: https://rtcstats.com/integrations/mcp
+description: >-
+  rtcStats operates a first-party hosted MCP server over Streamable HTTP at
+  https://api.rtcstats.com/v1.0/mcp. It is stateless JSON-RPC 2.0 and is also
+  declared in the OpenAPI as the mcpStreamablePost operation. The tools/list
+  method answers anonymously (HTTP 200, real inputSchema per tool); only
+  tools/call requires the Bearer application JWT, so the tool contract below was
+  captured live rather than transcribed from docs.
+server:
+  name: rtcstats
+  version: 1.9.0
+  transport: streamable-http
+  url: https://api.rtcstats.com/v1.0/mcp
+  protocol_version: '2025-06-18'
+  capabilities:
+    tools: {listChanged: true}
+  instructions: >-
+    RTCStats MCP over Streamable HTTP. Send the application JWT as Authorization:
+    Bearer on MCP HTTP requests. Tools: get_quota, list_sessions, get_session.
+    See API documentation for more details.
+  authentication:
+    type: http-bearer
+    header: 'Authorization: Bearer <application JWT>'
+    token_source: rtcStats dashboard, Settings > Applications (token shown once at creation)
+    plan_required: Developer or above
+  discovery:
+    tools_list_gated: false
+    tools_call_gated: true
+    initialize_gated: false
+  raw_tools_list: rtcstats-mcp-tools.json
+packages:
+  - {name: mcp-rtcstats, registry: npm, url: 'https://www.npmjs.com/package/mcp-rtcstats', role: standalone MCP server package}
+tools:
+  - name: get_quota
+    description: >-
+      Returns the application token account: accountName, accountPlan (free,
+      developer, trial_developer, enterprise), allowedCredits and remainingCredits
+      (monthly plus purchased pool).
+    input_schema: {type: object, properties: {}}
+    output_fields: [accountName, accountPlan, allowedCredits, remainingCredits]
+    read_only: true
+    consumes_credits: false
+    source_operation: openapi/rtcstats-api-openapi.yml#quota
+  - name: list_sessions
+    description: >-
+      Lists stored sessions for the application token account with a denormalized
+      abstract per row (browser/os, observation types + tags, severity counts,
+      score band). Filters are AND-combined across keys, OR-combined within a key.
+    input_schema_properties:
+      - {name: name, type: array, description: Title substring match, ANY of, max 20}
+      - {name: observationTypes, type: array, description: Exact observation type names, ANY of, max 20}
+      - {name: observationTags, type: array, description: Observation tags, ANY of}
+      - {name: os, type: string}
+      - {name: browser, type: string}
+      - {name: browserVersion, type: string, description: Major version only, e.g. '142'}
+      - {name: userId, type: string}
+      - {name: conferenceId, type: string}
+      - {name: sessionId, type: string}
+      - {name: hasCritical, type: boolean}
+      - {name: hasHigh, type: boolean}
+      - {name: hasMedium, type: boolean}
+      - {name: hasLowScore, type: boolean, description: Experience score < 60}
+      - {name: hasMediumScore, type: boolean, description: Experience score 60-79}
+      - {name: hasHighScore, type: boolean, description: Experience score >= 80}
+    read_only: true
+    consumes_credits: false
+    source_operation: openapi/rtcstats-api-openapi.yml#listSessions
+  - name: get_session
+    description: >-
+      Fetches the full analysis for one session — summary, observations,
+      deductions, experience score and AI summary.
+    input_schema_properties:
+      - {name: rtcstatsId, type: string, format: uuid, required: true}
+    read_only: true
+    consumes_credits: false
+    source_operation: openapi/rtcstats-api-openapi.yml#session
+notes:
+  - All three MCP tools are read-only and do not consume analyze credits.
+  - The write side of the API (upload, analyze, enrich, deleteSession) is NOT exposed as MCP tools — see mcp/rtcstats-tool-crosswalk.yml.
+  - No OAuth discovery documents are published; the server authenticates with a static Bearer application JWT rather than an OAuth 2.1 authorization server (probes recorded in well-known/rtcstats-well-known.yml).
+x-evidence:
+  fetched: '2026-08-09'
+  url: https://api.rtcstats.com/v1.0/mcp
+  method: 'POST tools/list + initialize (JSON-RPC 2.0)'
+  http_status: 200
+  content_type: application/json
