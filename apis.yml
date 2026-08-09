@@ -1,0 +1,57 @@
+name: rtcStats
+description: >-
+  SaaS for developers to troubleshoot and monitor WebRTC applications. Users upload webrtc-internals/rtcstats dumps or
+  stream stats to receive metrics, Observations, Deductions, an Experience Score, and an AI root-cause summary. Offers a
+  REST API, a hosted MCP server, and an open-source collection SDK/collector.
+url: https://rtcstats.apievangelist.com/apis.yml
+created: '2026-08-09'
+modified: '2026-08-09'
+specificationVersion: '0.21'
+tags:
+  - webrtc
+  - observability
+  - monitoring
+  - debugging
+  - real-time-communications
+  - video
+  - voice
+  - ai
+  - mcp
+  - developer-tools
+apis:
+  - name: rtcStats REST API
+    description: >-
+      REST API (v1.0) for uploading dumps, analyzing WebRTC stats, managing sessions, checking quota, and MCP access.
+      Bearer JWT auth via application token (paid plans).
+    humanURL: https://rtcstats.com/api-docs
+    baseURL: https://api.rtcstats.com/v1.0
+    tags:
+      - webrtc
+      - observability
+      - monitoring
+      - debugging
+      - real-time-communications
+      - video
+      - voice
+      - ai
+      - mcp
+      - developer-tools
+    properties:
+      - type: OpenAPI
+        url: https://rtcstats.com/api/openapi
+      - type: Documentation
+        url: https://rtcstats.com/api-docs
+      - type: Documentation
+        url: https://rtcstats.com/api-docs.md
+      - type: LLMsTxt
+        url: https://rtcstats.com/llms.txt
+      - type: MCPServer
+        url: https://api.rtcstats.com/v1.0/mcp
+maintainers:
+  - FN: rtcStats
+    url: https://rtcstats.com
+generated:
+  by: apis.io/add
+  model: claude-opus-4-8
+  confidence: 92
+  at: '2026-08-09T14:08:11.996Z'
