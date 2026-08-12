@@ -18,47 +18,30 @@ tags:
 - mcp
 - developer-tools
 apis:
-- name: rtcStats REST API
-  description: REST API (v1.0) for uploading dumps, analyzing WebRTC stats, managing sessions, checking quota, and
-    MCP access. Bearer JWT auth via application token (paid plans).
+- aid: rtcstats:rtcstats-rtcstats-api-api
+  name: rtcStats rtcStats API API
+  description: The rtcStats API API from rtcStats — 8 operation(s) for rtcstats api.
   humanURL: https://rtcstats.com/api-docs
   baseURL: https://api.rtcstats.com/v1.0
   tags:
-  - webrtc
-  - observability
-  - monitoring
-  - debugging
-  - real-time-communications
-  - video
-  - voice
-  - ai
-  - mcp
-  - developer-tools
+  - rtcStats API
   properties:
   - type: OpenAPI
-    url: https://rtcstats.com/api/openapi
+    url: openapi/rtcstats-rtcstats-api-api-openapi.yml
   - type: Documentation
     url: https://rtcstats.com/api-docs
   - type: Documentation
     url: https://rtcstats.com/api-docs.md
   - type: LLMsTxt
     url: https://rtcstats.com/llms.txt
-  - type: MCPServer
-    url: https://api.rtcstats.com/v1.0/mcp
-  - type: OpenAPI
-    url: openapi/rtcstats-api-openapi.yml
   - type: APIReference
     url: https://rtcstats.com/api-docs.md
   - type: GettingStarted
     url: https://rtcstats.com/kb/getting-started
-  - type: MCPServer
-    url: mcp/rtcstats-mcp.yml
   - type: ToolCrosswalk
     url: mcp/rtcstats-tool-crosswalk.yml
   - type: LLMsTxt
     url: llms/rtcstats-llms.txt
-  - type: Overlay
-    url: overlays/rtcstats-api-overlay.yaml
   - type: Authentication
     url: authentication/rtcstats-authentication.yml
   - type: Conventions
@@ -79,6 +62,9 @@ generated:
   confidence: 92
   at: '2026-08-09T14:08:11.996Z'
 common:
+- type: License
+  name: MIT
+  url: https://github.com/rtcstats/rtcstats/blob/main/LICENSE
 - type: AgenticAccess
   url: agentic-access/rtcstats-agentic-access.yml
 - type: DomainSecurity
