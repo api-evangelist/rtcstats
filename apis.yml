@@ -2,7 +2,7 @@ name: rtcStats
 description: SaaS for developers to troubleshoot and monitor WebRTC applications. Users upload webrtc-internals/rtcstats
   dumps or stream stats to receive metrics, Observations, Deductions, an Experience Score, and an AI root-cause
   summary. Offers a REST API, a hosted MCP server, and an open-source collection SDK/collector.
-url: https://rtcstats.apievangelist.com/apis.yml
+url: https://raw.githubusercontent.com/api-evangelist/rtcstats/refs/heads/main/apis.yml
 created: '2026-08-09'
 modified: '2026-08-09'
 specificationVersion: '0.21'
