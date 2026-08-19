@@ -1,0 +1,291 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "rtcStats rtcStats API API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "rtcStats API",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Upload",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.rtcstats.com/v1.0/upload",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Upload and store a WebRTC dump file or a rtcstats file to your account using a chunked flow. <br/><br/>The API works in two steps: <ul><li>- First upload chunks via multipart/form-data</li><li>- Then assemble via application/json</li></ul>The API consumes one credit if successful."
+        },
+        {
+          "info": {
+            "name": "Analyze",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.rtcstats.com/v1.0/analyze",
+            "params": [
+              {
+                "name": "save",
+                "value": "",
+                "type": "query",
+                "description": "When <code>true</code> or <code>1</code>, store the file in the account in addition to returning the analysis JSON."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Upload a webrtc-internal file or a rtcstats file, process it and return summary, observations and scores. By default the session is not stored: pass query <code>save=true</code> (or <code>save=1</code>) to also persist the dump like <code>/upload</code>.<br/><br/>Send the dump the same way as <code>/upload</code>: upload the file in chunks, then send a small JSON assemble request.<br/><br/>This API consumes one credit if successful."
+        },
+        {
+          "info": {
+            "name": "Enrich",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.rtcstats.com/v1.0/enrich",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "For a rtcstats-server or any server that only needs the observations and scores projection. Processes a webrtc-internal file or a rtcstats file and returns just that projection: experience, audio, video, connectivity and observations scores, per-severity observation counts, flat trimmed observation records, and the user-agent data. The session is never stored.<br/><br/>Send the dump the same way as <code>/upload</code>: upload the file in chunks, then send a small JSON assemble request.<br/><br/"
+        },
+        {
+          "info": {
+            "name": "MCP Streamable HTTP",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.rtcstats.com/v1.0/mcp",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Model Context Protocol <b>Streamable HTTP</b> transport. <br/>Use an MCP client with this URL. <br/>Send <code>Authorization: Bearer</code> with your application JWT on requests that invoke tools. <br/>Exposes tools:<ul><li>- <code>get_quota</code></li><li>- <code>list_sessions</code></li><li>- <code>get_session</code></li></ul>"
+        },
+        {
+          "info": {
+            "name": "Quota",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.rtcstats.com/v1.0/quota",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns total allowed credits and remaining credits for the account. Include the purchased credits."
+        },
+        {
+          "info": {
+            "name": "List observations",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.rtcstats.com/v1.0/observations",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns the list of observations the analyzer can emit."
+        },
+        {
+          "info": {
+            "name": "List sessions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.rtcstats.com/v1.0/sessions",
+            "params": [
+              {
+                "name": "name",
+                "value": "",
+                "type": "query",
+                "description": "Filter sessions whose title contains ANY of these substrings"
+              },
+              {
+                "name": "observationTypes",
+                "value": "",
+                "type": "query",
+                "description": "Filter sessions that contain ANY of these observation type strings (exact type name, e.g. `turnNoConfig`). Comma-separated. Only critical/high/medium observations are indexed (low/info are excluded). The full catalog of types is available from GET /v1.0/observations. Up to 20 values."
+              },
+              {
+                "name": "observationTags",
+                "value": "",
+                "type": "query",
+                "description": "Filter sessions whose observations carry ANY of these tags. Comma-separated. Valid tags: `connectivity`, `security`, `audio`, `video`, `datachannel`, `outbound`, `inbound`, `peripheral`, `behavior`, `network`, `configuration`, `cpu`, `bug`."
+              },
+              {
+                "name": "os",
+                "value": "",
+                "type": "query",
+                "description": "Filter sessions by operating system (exact match). Examples: `macOS`, `Windows`, `Linux`, `Android`, `iPhone`, `iPad`."
+              },
+              {
+                "name": "browser",
+                "value": "",
+                "type": "query",
+                "description": "Filter sessions by browser (exact match). Examples: `Chrome`, `Safari`, `Firefox`, `Edge`."
+              },
+              {
+                "name": "browserVersion",
+                "value": "",
+                "type": "query",
+                "description": "Filter sessions by major browser version (exact match, e.g. `142`)."
+              },
+              {
+                "name": "userId",
+                "value": "",
+                "type": "query",
+                "description": "Filter sessions by the end-user identifier carried in the rtcstats JWT (summary metadata user)."
+              },
+              {
+                "name": "conferenceId",
+                "value": "",
+                "type": "query",
+                "description": "Filter sessions by the conference identifier carried in the rtcstats JWT (summary metadata conference)."
+              },
+              {
+                "name": "sessionId",
+                "value": "",
+                "type": "query",
+                "description": "Filter sessions by the session identifier carried in the rtcstats JWT (summary metadata session)."
+              },
+              {
+                "name": "hasCritical",
+                "value": "",
+                "type": "query",
+                "description": "When `true`, only sessions with at least one critical-severity observation."
+              },
+              {
+                "name": "hasHigh",
+                "value": "",
+                "type": "query",
+                "description": "When `true`, only sessions with at least one high-severity observation."
+              },
+              {
+                "name": "hasMedium",
+                "value": "",
+                "type": "query",
+                "description": "When `true`, only sessions with at least one medium-severity observation."
+              },
+              {
+                "name": "hasLowScore",
+                "value": "",
+                "type": "query",
+                "description": "When `true`, only sessions whose experience score is low (`< 60`)."
+              },
+              {
+                "name": "hasMediumScore",
+                "value": "",
+                "type": "query",
+                "description": "When `true`, only sessions whose experience score is medium (`60` to `79`)."
+              },
+              {
+                "name": "hasHighScore",
+                "value": "",
+                "type": "query",
+                "description": "When `true`, only sessions whose experience score is high (`>= 80`)."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns existing stored sessions for the token account ordered by creation date (newest first). All filters are optional. Different filters are AND-combined; multiple values within one filter are OR-combined."
+        },
+        {
+          "info": {
+            "name": "Retrieve Session",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.rtcstats.com/v1.0/sessions/:rtcstatsId",
+            "params": [
+              {
+                "name": "rtcstatsId",
+                "value": "",
+                "type": "path",
+                "description": "The rtcstats session identifier"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns the session detail including summary, observations and scores."
+        },
+        {
+          "info": {
+            "name": "Delete session",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.rtcstats.com/v1.0/sessions/:rtcstatsId",
+            "params": [
+              {
+                "name": "rtcstatsId",
+                "value": "",
+                "type": "path",
+                "description": "The rtcstats session identifier"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Deletes a stored session by its identifier."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

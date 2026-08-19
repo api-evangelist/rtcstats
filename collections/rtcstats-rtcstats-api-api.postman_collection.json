@@ -1,0 +1,3692 @@
+{
+  "item": [
+    {
+      "id": "f35df448-5982-4556-b7cc-42ef6331084d",
+      "name": "rtcStats API",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "ada55183-6346-4475-8b3d-c364d8b935f3",
+          "name": "Upload",
+          "request": {
+            "name": "Upload",
+            "description": {
+              "content": "Upload and store a WebRTC dump file or a rtcstats file to your account using a chunked flow. <br/><br/>The API works in two steps: <ul><li>- First upload chunks via multipart/form-data</li><li>- Then assemble via application/json</li></ul>The API consumes one credit if successful.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1.0",
+                "upload"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "chunk",
+                  "type": "file",
+                  "description": "(Required) "
+                },
+                {
+                  "key": "fileId",
+                  "value": "<string>",
+                  "type": "text",
+                  "description": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble)."
+                },
+                {
+                  "key": "chunkIndex",
+                  "value": "<string>",
+                  "type": "text",
+                  "description": "(Required) "
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "d8eee2e3-aab7-47ba-950c-8d36a3f43af1",
+              "name": "Success",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "upload"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"rtcstatsId\": \"string\",\n  \"rtcstatsUrl\": \"string\",\n  \"embedUrl\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2172a941-e83c-4e51-aa42-3b267c5fb6d6",
+              "name": "Invalid request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "upload"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fe9d7a63-4486-4f4c-8b6d-681ca1b28d4c",
+              "name": "Missing or invalid token",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "upload"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f27a4731-b560-41a2-a8a1-e7a416ca2a49",
+              "name": "No credits available",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "upload"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Payment Required",
+              "code": 402,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "62d6ca98-7382-45f4-8a82-cb88e33208fa",
+              "name": "File exceeds size limit",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "upload"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Request Entity Too Large",
+              "code": 413,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b15c251c-e3f9-4252-9934-7d56d95aedc2",
+              "name": "File rejected by the parser. <code>errorCode</code> is <code>parsing_issue</code> (corrupt or unsupported dump, generic message) or <code>other_issue</code> (invalid file or format too old, specific message)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "upload"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unsupported Media Type",
+              "code": 415,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3661a624-24a9-40fe-a9f5-0357c4f198f4",
+              "name": "Unexpected processing error. A generic message is returned; internal error details are not exposed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "upload"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "2d70f290-3617-4e71-8ebb-76bb39160c2c",
+          "name": "Analyze",
+          "request": {
+            "name": "Analyze",
+            "description": {
+              "content": "Upload a webrtc-internal file or a rtcstats file, process it and return summary, observations and scores. By default the session is not stored: pass query <code>save=true</code> (or <code>save=1</code>) to also persist the dump like <code>/upload</code>.<br/><br/>Send the dump the same way as <code>/upload</code>: upload the file in chunks, then send a small JSON assemble request.<br/><br/>This API consumes one credit if successful.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1.0",
+                "analyze"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "save",
+                  "value": "<string>",
+                  "description": "When <code>true</code> or <code>1</code>, store the file in the account in addition to returning the analysis JSON."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "chunk",
+                  "type": "file",
+                  "description": "(Required) "
+                },
+                {
+                  "key": "fileId",
+                  "value": "<string>",
+                  "type": "text",
+                  "description": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble)."
+                },
+                {
+                  "key": "chunkIndex",
+                  "value": "<string>",
+                  "type": "text",
+                  "description": "(Required) "
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "ea66cc62-b41f-4736-8b49-14720e92ebb0",
+              "name": "Success. Analysis result for a raw body or an assemble request; <code>{ success: true }</code> for a chunk request (chunk stored, nothing analyzed yet)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "analyze"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "save",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "type": "file"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"callStart\": \"1996-04-28T15:18:09.955Z\",\n    \"callEnd\": \"1988-10-21T08:58:21.151Z\",\n    \"durationMs\": 7516,\n    \"userAgentData\": {},\n    \"pConnectionsNumber\": 200,\n    \"pConnections\": {\n      \"key_0\": {},\n      \"key_1\": {},\n      \"key_2\": {},\n      \"key_3\": {}\n    },\n    \"streams\": {\n      \"key_0\": {},\n      \"key_1\": {}\n    },\n    \"transports\": {\n      \"key_0\": {}\n    },\n    \"aggregatedStats\": {},\n    \"metadata\": {},\n    \"connectivity\": \"DIRECT/UDP\",\n    \"connectionIPType\": \"IPv6\",\n    \"uploadTimestamp\": \"2008-04-14T01:24:28.652Z\",\n    \"title\": \"string\",\n    \"fileName\": \"string\",\n    \"fileSize\": 1057,\n    \"experienceScore\": 2726.736655426817,\n    \"audioScore\": null,\n    \"videoScore\": null,\n    \"connectivityScore\": 8199.145507683677,\n    \"observationsScore\": 3087,\n    \"tagClouds\": [\n      {\n        \"tag\": \"string\",\n        \"total\": 1246.8412088622572,\n        \"severity\": \"string\"\n      },\n      {\n        \"tag\": \"string\",\n        \"total\": 508.9491188896045,\n        \"severity\": \"string\"\n      }\n    ],\n    \"id\": \"2ea84ede-6301-49f7-7ebe-adf6bc4a1020\",\n    \"created_at\": \"2003-09-30T04:52:38.500Z\",\n    \"uploaded_by\": null,\n    \"uploaded_by_email\": \"WTCLIjy@ZDcXHlIwrhJUskD.qgo\",\n    \"public_link\": null,\n    \"description\": \"string\",\n    \"tags\": [\n      \"string\",\n      \"string\"\n    ],\n    \"observations\": [\n      {\n        \"type\": \"string\",\n        \"severity\": \"low\",\n        \"category\": \"connections\",\n        \"source\": {\n          \"pid\": \"string\",\n          \"sid\": \"string\",\n          \"cpid\": \"string\",\n          \"did\": \"string\",\n          \"rid\": \"string\",\n          \"timestamp\": \"string\",\n          \"ssrcId\": 7424,\n          \"labelId\": \"string\"\n        },\n        \"label\": {},\n        \"tags\": [\n          \"string\",\n          \"string\"\n        ],\n        \"url\": \"string\",\n        \"firstSeenAt\": 1407,\n        \"valueInCount\": 8781.399129582478,\n        \"averageInMs\": 410.6778112524223,\n        \"maxInMs\": 9650.322766216806,\n        \"valueInPercent\": 8957.552873277073,\n        \"durationInPercent\": 8025.445362034207,\n        \"durationInMs\": 1184.6502121241986,\n        \"durationInSeconds\": 1291.6006985933536,\n        \"indicators\": {},\n        \"meaning\": \"string\",\n        \"property\": \"string\"\n      },\n      {\n        \"type\": \"string\",\n        \"severity\": \"critical\",\n        \"category\": \"datachannels\",\n        \"source\": {\n          \"pid\": \"string\",\n          \"sid\": \"string\",\n          \"cpid\": \"string\",\n          \"did\": \"string\",\n          \"rid\": \"string\",\n          \"timestamp\": \"string\",\n          \"ssrcId\": 6407,\n          \"labelId\": \"string\"\n        },\n        \"label\": {},\n        \"tags\": [\n          \"string\",\n          \"string\"\n        ],\n        \"url\": \"string\",\n        \"firstSeenAt\": 8438,\n        \"valueInCount\": 897.4834949024646,\n        \"averageInMs\": 7450.594811783153,\n        \"maxInMs\": 9564.05135984509,\n        \"valueInPercent\": 7021.553922272084,\n        \"durationInPercent\": 7193.889164874362,\n        \"durationInMs\": 4787.900220713951,\n        \"durationInSeconds\": 9755.293838957376,\n        \"indicators\": {},\n        \"meaning\": \"string\",\n        \"property\": \"string\"\n      }\n    ],\n    \"features\": {},\n    \"observationsCount\": {},\n    \"aiSummary\": {\n      \"model\": \"string\",\n      \"summary\": {\n        \"highlight\": \"string\",\n        \"network\": \"string\",\n        \"networkScore\": \"string\",\n        \"media\": \"string\",\n        \"mediaScore\": \"string\",\n        \"user\": \"string\",\n        \"userScore\": \"string\",\n        \"key_0\": 695,\n        \"key_1\": \"string\",\n        \"key_2\": 3100.6527132238202\n      },\n      \"version\": \"string\"\n    }\n  },\n  \"processorVersion\": \"string\",\n  \"rtcstatsId\": \"string\",\n  \"rtcstatsUrl\": \"string\",\n  \"embedUrl\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a7d6ba45-81ce-4a68-bbd2-1538b6611ea1",
+              "name": "Invalid request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "analyze"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "save",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "type": "file"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "40977733-e185-4a74-aad5-9d19403a9e60",
+              "name": "Missing or invalid token",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "analyze"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "save",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "type": "file"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a7ad6ac5-2707-4d6c-b548-33916f25f7bc",
+              "name": "No credits available",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "analyze"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "save",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "type": "file"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Payment Required",
+              "code": 402,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e86fef63-b26b-4d80-b8ae-b93f39e6688f",
+              "name": "File exceeds size limit",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "analyze"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "save",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "type": "file"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Request Entity Too Large",
+              "code": 413,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "52e8874c-49ac-43c0-8898-72518e5c5d24",
+              "name": "File rejected by the parser. <code>errorCode</code> is <code>parsing_issue</code> (corrupt or unsupported dump, generic message) or <code>other_issue</code> (invalid file or format too old, specific message)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "analyze"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "save",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "type": "file"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unsupported Media Type",
+              "code": 415,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "82c437d4-82b4-4f74-a30d-a4a0659d7c32",
+              "name": "Unexpected processing error. A generic message is returned; internal error details are not exposed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "analyze"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "save",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "type": "file"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d02c394f-312f-4895-bce2-977975f52d78",
+          "name": "Enrich",
+          "request": {
+            "name": "Enrich",
+            "description": {
+              "content": "For a rtcstats-server or any server that only needs the observations and scores projection. Processes a webrtc-internal file or a rtcstats file and returns just that projection: experience, audio, video, connectivity and observations scores, per-severity observation counts, flat trimmed observation records, and the user-agent data. The session is never stored.<br/><br/>Send the dump the same way as <code>/upload</code>: upload the file in chunks, then send a small JSON assemble request.<br/><br/>This API consumes one credit if successful.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1.0",
+                "enrich"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "chunk",
+                  "type": "file",
+                  "description": "(Required) "
+                },
+                {
+                  "key": "fileId",
+                  "value": "<string>",
+                  "type": "text",
+                  "description": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble)."
+                },
+                {
+                  "key": "chunkIndex",
+                  "value": "<string>",
+                  "type": "text",
+                  "description": "(Required) "
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "c32762d6-f03e-4104-91f4-17d0c7225d86",
+              "name": "Success. Scores and trimmed observations projection for a raw body or an assemble request; <code>{ success: true }</code> for a chunk request (chunk stored, nothing analyzed yet).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "enrich"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "type": "file"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"scores\": {\n      \"experienceScore\": 7121.962268928876,\n      \"audioScore\": null,\n      \"videoScore\": 9865.666122274639,\n      \"connectivityScore\": null,\n      \"observationsScore\": 1954.462574147482\n    },\n    \"observationsCount\": {\n      \"critical\": 2845,\n      \"high\": 5068,\n      \"medium\": 5648,\n      \"low\": 3500,\n      \"info\": 8106\n    },\n    \"observations\": [\n      {\n        \"type\": \"string\",\n        \"severity\": \"low\",\n        \"category\": \"logs\",\n        \"tags\": [\n          \"string\",\n          \"string\"\n        ],\n        \"firstSeenAt\": 9217,\n        \"url\": \"string\",\n        \"property\": \"string\",\n        \"valueInCount\": 9750.576356590707,\n        \"valueInPercent\": 6582.2618454119975,\n        \"averageInMs\": 141.16345106625295,\n        \"maxInMs\": 9752.197907225232,\n        \"durationInMs\": 50.06556256316963,\n        \"durationInSeconds\": 6628.225884600557,\n        \"durationInPercent\": 7721.08988854258\n      },\n      {\n        \"type\": \"string\",\n        \"severity\": \"medium\",\n        \"category\": \"connections\",\n        \"tags\": [\n          \"string\",\n          \"string\"\n        ],\n        \"firstSeenAt\": 498,\n        \"url\": \"string\",\n        \"property\": \"string\",\n        \"valueInCount\": 6746.886237251973,\n        \"valueInPercent\": 3835.1585143958832,\n        \"averageInMs\": 6243.6684875956635,\n        \"maxInMs\": 9639.612666303337,\n        \"durationInMs\": 7713.938825907811,\n        \"durationInSeconds\": 4138.335535899587,\n        \"durationInPercent\": 9481.228379135917\n      }\n    ],\n    \"userAgentData\": {\n      \"key_0\": true,\n      \"key_1\": 345,\n      \"key_2\": 5841\n    }\n  },\n  \"processorVersion\": \"string\",\n  \"generatedAt\": 936\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c35d8f38-7f11-4e41-9764-b64b67a28687",
+              "name": "Invalid request: empty body, failed decompression, or no chunks found for the given fileId",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "enrich"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "type": "file"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1a4a5bd8-bfa8-4f3a-860a-93bbe5c58cd4",
+              "name": "Missing or invalid token",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "enrich"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "type": "file"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ad334ff7-c7b7-4fbb-bda4-796f0fa6a886",
+              "name": "No credits available",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "enrich"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "type": "file"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Payment Required",
+              "code": 402,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7561b5d5-de19-4de4-83d0-5f426790d681",
+              "name": "API access is not included in the account plan",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "enrich"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "type": "file"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "62e2fba4-5a6e-4b94-a865-46ec8b1451fe",
+              "name": "File exceeds size limit",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "enrich"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "type": "file"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Request Entity Too Large",
+              "code": 413,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "12bdfc38-ef41-4526-a170-dc24d6cf48cd",
+              "name": "File rejected by the parser. <code>errorCode</code> is <code>parsing_issue</code> (corrupt or unsupported dump, generic message) or <code>other_issue</code> (invalid file or format too old, specific message)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "enrich"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "type": "file"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unsupported Media Type",
+              "code": 415,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "579e12d7-65e3-4d1b-b267-272857529850",
+              "name": "Unexpected processing error. A generic message is returned; internal error details are not exposed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "enrich"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunk",
+                      "type": "file"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) Client-generated id for this chunked upload (same value for all chunks and assemble).",
+                        "type": "text/plain"
+                      },
+                      "key": "fileId",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "chunkIndex",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "578e25e6-24f3-43fe-b809-f3daaf3a57f0",
+          "name": "MCP Streamable HTTP",
+          "request": {
+            "name": "MCP Streamable HTTP",
+            "description": {
+              "content": "Model Context Protocol <b>Streamable HTTP</b> transport. <br/>Use an MCP client with this URL. <br/>Send <code>Authorization: Bearer</code> with your application JWT on requests that invoke tools. <br/>Exposes tools:<ul><li>- <code>get_quota</code></li><li>- <code>list_sessions</code></li><li>- <code>get_session</code></li></ul>",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1.0",
+                "mcp"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "text/event-stream"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "<object>",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "5004d29b-869b-42ae-adb5-ceee61e87260",
+              "name": "Success (MCP Streamable HTTP)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "mcp"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "text/event-stream"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<object>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Session identifier when the transport uses sessions (omitted in stateless mode).",
+                  "key": "mcp-session-id",
+                  "value": "string"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "text/event-stream"
+                }
+              ],
+              "body": "data: {\"jsonrpc\":\"2.0\",\"id\":1,\"result\":{\"protocolVersion\":\"2024-11-05\",\"capabilities\":{},\"serverInfo\":{\"name\":\"rtcstats\",\"version\":\"1.0.0\"}}}\n\n",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "0ec95b7d-58a1-497f-8cef-8239b555f72e",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "mcp"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<object>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"jsonrpc\": \"2.0\",\n  \"error\": {\n    \"code\": -32700,\n    \"message\": \"Parse error: Invalid JSON\"\n  },\n  \"id\": null\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bd900905-248d-45a3-8141-7c5267b2bd33",
+              "name": "MCP Session Not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "mcp"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<object>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"jsonrpc\": \"2.0\",\n  \"error\": {\n    \"code\": -32001,\n    \"message\": \"Session not found\"\n  },\n  \"id\": null\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "1afe30db-aad8-4eff-bd99-a316dc15e79f",
+          "name": "Quota",
+          "request": {
+            "name": "Quota",
+            "description": {
+              "content": "Returns total allowed credits and remaining credits for the account. Include the purchased credits.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1.0",
+                "quota"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "218ab407-1f71-4f64-9917-3f00199fdf62",
+              "name": "Success",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "quota"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"accountName\": \"string\",\n  \"accountPlan\": \"enterprise\",\n  \"allowedCredits\": 761.591550401347,\n  \"remainingCredits\": 553.4231128658496\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d14e7e86-0c0d-4774-9c19-af47f185b9e5",
+              "name": "Missing or invalid token",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "quota"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f2181552-218f-4fcf-b943-84dc02362748",
+              "name": "Server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "quota"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3ce28f2f-b0e0-4985-9c09-ab625849398b",
+          "name": "List observations",
+          "request": {
+            "name": "List observations",
+            "description": {
+              "content": "Returns the list of observations the analyzer can emit.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1.0",
+                "observations"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "17387d03-ef6a-468b-8028-6088f4d28b91",
+              "name": "Success",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "observations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"total\": 705,\n  \"data\": [\n    {\n      \"type\": \"string\",\n      \"title\": \"string\",\n      \"severity\": [\n        \"info\",\n        \"critical\"\n      ],\n      \"tags\": [\n        \"security\",\n        \"inbound\"\n      ]\n    },\n    {\n      \"type\": \"string\",\n      \"title\": \"string\",\n      \"severity\": [\n        \"critical\",\n        \"critical\"\n      ],\n      \"tags\": [\n        \"inbound\",\n        \"configuration\"\n      ]\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bf3a1a05-dbc5-4831-8982-6ea7c40e806d",
+              "name": "Missing or invalid token",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "observations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6fbf6136-d67d-4aba-9263-7965c5b06de7",
+              "name": "API access is not included in the account plan",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "observations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "78405347-b051-4fd4-a3ff-4fe2ee1dd224",
+          "name": "List sessions",
+          "request": {
+            "name": "List sessions",
+            "description": {
+              "content": "Returns existing stored sessions for the token account ordered by creation date (newest first). All filters are optional. Different filters are AND-combined; multiple values within one filter are OR-combined.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1.0",
+                "sessions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "name",
+                  "value": "<string>",
+                  "description": "Filter sessions whose title contains ANY of these substrings"
+                },
+                {
+                  "disabled": false,
+                  "key": "name",
+                  "value": "<string>",
+                  "description": "Filter sessions whose title contains ANY of these substrings"
+                },
+                {
+                  "disabled": false,
+                  "key": "observationTypes",
+                  "value": "<string>",
+                  "description": "Filter sessions that contain ANY of these observation type strings (exact type name, e.g. `turnNoConfig`). Comma-separated. Only critical/high/medium observations are indexed (low/info are excluded). The full catalog of types is available from GET /v1.0/observations. Up to 20 values."
+                },
+                {
+                  "disabled": false,
+                  "key": "observationTypes",
+                  "value": "<string>",
+                  "description": "Filter sessions that contain ANY of these observation type strings (exact type name, e.g. `turnNoConfig`). Comma-separated. Only critical/high/medium observations are indexed (low/info are excluded). The full catalog of types is available from GET /v1.0/observations. Up to 20 values."
+                },
+                {
+                  "disabled": false,
+                  "key": "observationTags",
+                  "value": "<string>",
+                  "description": "Filter sessions whose observations carry ANY of these tags. Comma-separated. Valid tags: `connectivity`, `security`, `audio`, `video`, `datachannel`, `outbound`, `inbound`, `peripheral`, `behavior`, `network`, `configuration`, `cpu`, `bug`."
+                },
+                {
+                  "disabled": false,
+                  "key": "observationTags",
+                  "value": "<string>",
+                  "description": "Filter sessions whose observations carry ANY of these tags. Comma-separated. Valid tags: `connectivity`, `security`, `audio`, `video`, `datachannel`, `outbound`, `inbound`, `peripheral`, `behavior`, `network`, `configuration`, `cpu`, `bug`."
+                },
+                {
+                  "disabled": false,
+                  "key": "os",
+                  "value": "<string>",
+                  "description": "Filter sessions by operating system (exact match). Examples: `macOS`, `Windows`, `Linux`, `Android`, `iPhone`, `iPad`."
+                },
+                {
+                  "disabled": false,
+                  "key": "browser",
+                  "value": "<string>",
+                  "description": "Filter sessions by browser (exact match). Examples: `Chrome`, `Safari`, `Firefox`, `Edge`."
+                },
+                {
+                  "disabled": false,
+                  "key": "browserVersion",
+                  "value": "<string>",
+                  "description": "Filter sessions by major browser version (exact match, e.g. `142`)."
+                },
+                {
+                  "disabled": false,
+                  "key": "userId",
+                  "value": "<string>",
+                  "description": "Filter sessions by the end-user identifier carried in the rtcstats JWT (summary metadata user)."
+                },
+                {
+                  "disabled": false,
+                  "key": "conferenceId",
+                  "value": "<string>",
+                  "description": "Filter sessions by the conference identifier carried in the rtcstats JWT (summary metadata conference)."
+                },
+                {
+                  "disabled": false,
+                  "key": "sessionId",
+                  "value": "<string>",
+                  "description": "Filter sessions by the session identifier carried in the rtcstats JWT (summary metadata session)."
+                },
+                {
+                  "disabled": false,
+                  "key": "hasCritical",
+                  "value": "<boolean>",
+                  "description": "When `true`, only sessions with at least one critical-severity observation."
+                },
+                {
+                  "disabled": false,
+                  "key": "hasHigh",
+                  "value": "<boolean>",
+                  "description": "When `true`, only sessions with at least one high-severity observation."
+                },
+                {
+                  "disabled": false,
+                  "key": "hasMedium",
+                  "value": "<boolean>",
+                  "description": "When `true`, only sessions with at least one medium-severity observation."
+                },
+                {
+                  "disabled": false,
+                  "key": "hasLowScore",
+                  "value": "<boolean>",
+                  "description": "When `true`, only sessions whose experience score is low (`< 60`)."
+                },
+                {
+                  "disabled": false,
+                  "key": "hasMediumScore",
+                  "value": "<boolean>",
+                  "description": "When `true`, only sessions whose experience score is medium (`60` to `79`)."
+                },
+                {
+                  "disabled": false,
+                  "key": "hasHighScore",
+                  "value": "<boolean>",
+                  "description": "When `true`, only sessions whose experience score is high (`>= 80`)."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "b05004cc-ab71-4755-a616-e3c79630f8c6",
+              "name": "Success",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "sessions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "observationTypes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "observationTypes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "observationTags",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "observationTags",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "os",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "browser",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "browserVersion",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "userId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "conferenceId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "sessionId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "hasCritical",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "hasHigh",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "hasMedium",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "hasLowScore",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "hasMediumScore",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "hasHighScore",
+                      "value": "<boolean>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"total\": 5247,\n  \"data\": [\n    {\n      \"rtcstatsId\": \"4711d9a3-e117-895a-59f3-02328220fcfa\",\n      \"createdAt\": \"1968-06-27T16:42:42.622Z\",\n      \"sessionStart\": \"string\",\n      \"sessionEnd\": \"string\",\n      \"title\": \"string\",\n      \"rtcstatsUrl\": \"string\",\n      \"abstract\": {\n        \"observationTypes\": [\n          \"string\",\n          \"string\"\n        ],\n        \"observationTags\": [\n          \"string\",\n          \"string\"\n        ],\n        \"browser\": null,\n        \"browserVersion\": null,\n        \"os\": \"string\",\n        \"osVersion\": null,\n        \"conferenceId\": null,\n        \"sessionId\": \"string\",\n        \"userId\": \"string\",\n        \"experienceScore\": 8617.114640565842,\n        \"connectivity\": null,\n        \"observationsCritical\": 2838,\n        \"observationsHigh\": 5224,\n        \"observationsMedium\": 7577,\n        \"scoreBand\": \"low\"\n      },\n      \"embedUrl\": \"string\"\n    },\n    {\n      \"rtcstatsId\": \"be93e1a4-e5b3-2f82-0e9f-94c5055c164b\",\n      \"createdAt\": \"2004-04-15T06:58:54.418Z\",\n      \"sessionStart\": null,\n      \"sessionEnd\": \"string\",\n      \"title\": \"string\",\n      \"rtcstatsUrl\": \"string\",\n      \"abstract\": {\n        \"observationTypes\": [\n          \"string\",\n          \"string\"\n        ],\n        \"observationTags\": [\n          \"string\",\n          \"string\"\n        ],\n        \"browser\": \"string\",\n        \"browserVersion\": \"string\",\n        \"os\": null,\n        \"osVersion\": \"string\",\n        \"conferenceId\": \"string\",\n        \"sessionId\": \"string\",\n        \"userId\": null,\n        \"experienceScore\": null,\n        \"connectivity\": null,\n        \"observationsCritical\": 4601,\n        \"observationsHigh\": 126,\n        \"observationsMedium\": 895,\n        \"scoreBand\": \"unrated\"\n      },\n      \"embedUrl\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f78932b0-c157-4ab5-b5b3-5f54f36888a5",
+              "name": "Missing or invalid token",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "sessions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "observationTypes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "observationTypes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "observationTags",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "observationTags",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "os",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "browser",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "browserVersion",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "userId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "conferenceId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "sessionId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "hasCritical",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "hasHigh",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "hasMedium",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "hasLowScore",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "hasMediumScore",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "hasHighScore",
+                      "value": "<boolean>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1c57e43e-1d09-432e-96d1-887225493dbb",
+              "name": "Server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "sessions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "observationTypes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "observationTypes",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "observationTags",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "observationTags",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "os",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "browser",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "browserVersion",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "userId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "conferenceId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "sessionId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "hasCritical",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "hasHigh",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "hasMedium",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "hasLowScore",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "hasMediumScore",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "hasHighScore",
+                      "value": "<boolean>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "8760f40f-07bb-49f7-9af6-37c19597caf9",
+          "name": "Retrieve Session",
+          "request": {
+            "name": "Retrieve Session",
+            "description": {
+              "content": "Returns the session detail including summary, observations and scores.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1.0",
+                "sessions",
+                ":rtcstatsId"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "rtcstatsId",
+                  "description": "(Required) The rtcstats session identifier"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "51c9f8ca-f741-4090-9e26-2efac60e100f",
+              "name": "Success",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "sessions",
+                    ":rtcstatsId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "rtcstatsId",
+                      "description": "(Required) The rtcstats session identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"callStart\": \"2004-03-06T17:47:27.728Z\",\n    \"callEnd\": \"1957-06-05T11:16:40.565Z\",\n    \"durationMs\": 7172,\n    \"userAgentData\": {},\n    \"pConnectionsNumber\": 3221,\n    \"pConnections\": {\n      \"key_0\": {}\n    },\n    \"streams\": {\n      \"key_0\": {},\n      \"key_1\": {},\n      \"key_2\": {},\n      \"key_3\": {}\n    },\n    \"transports\": {\n      \"key_0\": {},\n      \"key_1\": {}\n    },\n    \"aggregatedStats\": {},\n    \"metadata\": {},\n    \"connectivity\": \"DIRECT/UDP\",\n    \"connectionIPType\": \"IPv4\",\n    \"uploadTimestamp\": \"2009-05-16T10:45:25.141Z\",\n    \"title\": \"string\",\n    \"fileName\": \"string\",\n    \"fileSize\": 1085,\n    \"experienceScore\": 152.08222855329745,\n    \"audioScore\": 9871.878648388394,\n    \"videoScore\": null,\n    \"connectivityScore\": null,\n    \"observationsScore\": 9146,\n    \"tagClouds\": [\n      {\n        \"tag\": \"string\",\n        \"total\": 2323.93377414884,\n        \"severity\": \"string\"\n      },\n      {\n        \"tag\": \"string\",\n        \"total\": 2332.910445167499,\n        \"severity\": \"string\"\n      }\n    ],\n    \"id\": \"e18048d2-d2b9-6c2e-c0ad-112cf9e85c80\",\n    \"created_at\": null,\n    \"uploaded_by\": \"5e52e4fb-2bda-4de0-ec87-f5d2b8a9b830\",\n    \"uploaded_by_email\": null,\n    \"public_link\": \"string\",\n    \"description\": \"string\",\n    \"tags\": [\n      \"string\",\n      \"string\"\n    ],\n    \"observations\": [\n      {\n        \"type\": \"string\",\n        \"severity\": \"high\",\n        \"category\": \"connections\",\n        \"source\": {\n          \"pid\": \"string\",\n          \"sid\": \"string\",\n          \"cpid\": \"string\",\n          \"did\": \"string\",\n          \"rid\": \"string\",\n          \"timestamp\": \"string\",\n          \"ssrcId\": 2735,\n          \"labelId\": \"string\"\n        },\n        \"label\": {},\n        \"tags\": [\n          \"string\",\n          \"string\"\n        ],\n        \"url\": \"string\",\n        \"firstSeenAt\": 5471,\n        \"valueInCount\": 7823.9927150408475,\n        \"averageInMs\": 65.40955647124535,\n        \"maxInMs\": 6741.439736562383,\n        \"valueInPercent\": 3073.2747192651823,\n        \"durationInPercent\": 5716.392831613699,\n        \"durationInMs\": 8178.810134736064,\n        \"durationInSeconds\": 24.8576107362386,\n        \"indicators\": {},\n        \"meaning\": \"string\",\n        \"property\": \"string\"\n      },\n      {\n        \"type\": \"string\",\n        \"severity\": \"info\",\n        \"category\": \"pairs\",\n        \"source\": {\n          \"pid\": \"string\",\n          \"sid\": \"string\",\n          \"cpid\": \"string\",\n          \"did\": \"string\",\n          \"rid\": \"string\",\n          \"timestamp\": \"string\",\n          \"ssrcId\": 1805,\n          \"labelId\": \"string\"\n        },\n        \"label\": {},\n        \"tags\": [\n          \"string\",\n          \"string\"\n        ],\n        \"url\": \"string\",\n        \"firstSeenAt\": 4653,\n        \"valueInCount\": 9733.948050339579,\n        \"averageInMs\": 2923.0647277661537,\n        \"maxInMs\": 7270.319114265336,\n        \"valueInPercent\": 4686.448924713847,\n        \"durationInPercent\": 3699.0513773567955,\n        \"durationInMs\": 7731.719143748888,\n        \"durationInSeconds\": 860.2539999441105,\n        \"indicators\": {},\n        \"meaning\": \"string\",\n        \"property\": \"string\"\n      }\n    ],\n    \"features\": {},\n    \"observationsCount\": {},\n    \"aiSummary\": {\n      \"model\": \"string\",\n      \"summary\": {\n        \"highlight\": \"string\",\n        \"network\": \"string\",\n        \"networkScore\": \"string\",\n        \"media\": \"string\",\n        \"mediaScore\": \"string\",\n        \"user\": \"string\",\n        \"userScore\": \"string\"\n      },\n      \"version\": \"string\"\n    }\n  },\n  \"rtcstatsId\": \"9f2522b3-2cc5-251b-2c7c-e8408c7933ae\",\n  \"rtcstatsUrl\": \"string\",\n  \"processorVersion\": \"string\",\n  \"embedUrl\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "79c25418-75cc-4fc7-838b-04bc8750cd54",
+              "name": "Invalid session id",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "sessions",
+                    ":rtcstatsId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "rtcstatsId",
+                      "description": "(Required) The rtcstats session identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ac1af13c-4c1a-457f-8a40-6b6865711d73",
+              "name": "Missing or invalid token",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "sessions",
+                    ":rtcstatsId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "rtcstatsId",
+                      "description": "(Required) The rtcstats session identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b1f0ec93-cec8-4602-ab80-b468a118c858",
+              "name": "Session not found for this account",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "sessions",
+                    ":rtcstatsId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "rtcstatsId",
+                      "description": "(Required) The rtcstats session identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3801ac41-d04d-4734-8512-0524d193c4fb",
+              "name": "Reprocess failed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "sessions",
+                    ":rtcstatsId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "rtcstatsId",
+                      "description": "(Required) The rtcstats session identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2f9c0620-dee5-4419-843d-4aed336245da",
+              "name": "Server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "sessions",
+                    ":rtcstatsId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "rtcstatsId",
+                      "description": "(Required) The rtcstats session identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "bda6fd0f-16d5-433d-b526-afc6cb5a7ada",
+          "name": "Delete session",
+          "request": {
+            "name": "Delete session",
+            "description": {
+              "content": "Deletes a stored session by its identifier.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1.0",
+                "sessions",
+                ":rtcstatsId"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "rtcstatsId",
+                  "description": "(Required) The rtcstats session identifier"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "0e1ecdf4-6a4d-48c7-b071-2105d23b8e93",
+              "name": "Success",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "sessions",
+                    ":rtcstatsId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "rtcstatsId",
+                      "description": "(Required) The rtcstats session identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8d702d95-89d3-478e-bd4e-061d3fb6cc9b",
+              "name": "Invalid id",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "sessions",
+                    ":rtcstatsId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "rtcstatsId",
+                      "description": "(Required) The rtcstats session identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7b47a865-0be2-4afa-95dd-2c6faa7e1a48",
+              "name": "Missing or invalid token",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "sessions",
+                    ":rtcstatsId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "rtcstatsId",
+                      "description": "(Required) The rtcstats session identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "26d5deed-05bd-4c32-a2f4-b890a8150e32",
+              "name": "Not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "sessions",
+                    ":rtcstatsId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "rtcstatsId",
+                      "description": "(Required) The rtcstats session identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b5cbc117-d376-4daa-a85d-8ec11520a554",
+              "name": "Server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1.0",
+                    "sessions",
+                    ":rtcstatsId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "rtcstatsId",
+                      "description": "(Required) The rtcstats session identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"errorCode\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.rtcstats.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "97c47ece-13a2-4b72-ae35-2a1f7a16c3d0",
+    "name": "rtcStats rtcStats API API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "API for third-party applications to <b>upload</b>, <b>analyze</b>, or use the <b>MCP Streamable HTTP</b> endpoint at <code>/v1.0/mcp</code>. <br/><br/>Uses Bearer token authentication. <br/><br/><b>Number formatting:</b> numeric values in responses are rounded, epoch timestamps to a whole millisecond and every other number to at most 2 decimals; integer counts and large identifiers are preserved. <br/><br/><b>Note:</b> Need to create an application token in Settings from your paid account.",
+      "type": "text/plain"
+    }
+  }
+}
