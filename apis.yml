@@ -7,6 +7,17 @@ created: '2026-08-09'
 modified: '2026-08-09'
 specificationVersion: '0.23'
 tags:
+- WebRTC
+- Observability
+- Monitoring
+- Debugging
+- Real-Time Communications
+- Video
+- Voice
+- Artificial Intelligence
+- MCP
+- Developer Tools
+tags_raw:
 - webrtc
 - observability
 - monitoring
