@@ -1,0 +1,14 @@
+{
+  "repo": "rtcstats",
+  "feeds": [
+    {
+      "source": "https://rtcstats.com/support",
+      "feed_url": "https://rtcstats.com/support",
+      "title": "",
+      "saved": 0,
+      "method": "none"
+    }
+  ],
+  "post_count": 0,
+  "fetched": "2026-08-22T20:20:02Z"
+}
