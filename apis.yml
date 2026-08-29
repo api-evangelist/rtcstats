@@ -3,6 +3,20 @@ description: SaaS for developers to troubleshoot and monitor WebRTC applications
   dumps or stream stats to receive metrics, Observations, Deductions, an Experience Score, and an AI root-cause
   summary. Offers a REST API, a hosted MCP server, and an open-source collection SDK/collector.
 url: https://raw.githubusercontent.com/api-evangelist/rtcstats/refs/heads/main/apis.yml
+deliveryModel:
+  model: open-core
+  license: MIT
+  open_source: true
+  commercial: true
+  callable_host: true
+  label: Open core · an OSS project plus a commercial hosted product
+  confidence: high
+  source:
+  - license
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 created: '2026-08-09'
 modified: '2026-08-09'
 specificationVersion: '0.23'
@@ -73,6 +87,10 @@ generated:
   confidence: 92
   at: '2026-08-09T14:08:11.996Z'
 common:
+- type: IssueTracker
+  url: https://github.com/rtcstats/rtcstats/issues
+- type: Releases
+  url: https://github.com/rtcstats/rtcstats/releases
 - type: License
   name: MIT
   url: https://github.com/rtcstats/rtcstats/blob/main/LICENSE
