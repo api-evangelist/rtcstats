@@ -22,10 +22,10 @@ modified: '2026-08-09'
 specificationVersion: '0.23'
 tags:
 - WebRTC
-- Observability
+- observability
 - Monitoring
-- Debugging
-- Real-Time Communications
+- debugging
+- real-time-communications
 - Video
 - Voice
 - Artificial Intelligence
