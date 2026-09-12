@@ -103,6 +103,8 @@ generated:
   confidence: 92
   at: '2026-08-09T14:08:11.996Z'
 common:
+- type: Website
+  url: https://www.rtcstats.com/
 - type: IssueTracker
   url: https://github.com/rtcstats/rtcstats/issues
 - type: Releases
