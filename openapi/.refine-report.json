@@ -1,7 +1,7 @@
 {
   "provider": "rtcstats",
   "sources": [
-    "rtcstats-rtcstats-api-api-openapi.yml"
+    "_original/rtcstats-api-openapi.yml"
   ],
   "outputs": [
     "rtcstats-rtcstats-api-api-openapi.yml"
@@ -10,8 +10,14 @@
   "errors": [],
   "warnings": [],
   "notes": [
-    "rtcstats-rtcstats-api-api-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "1 archived document(s) dropped as subsets of other archived documents",
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "rtcstats-api-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "rtcstats-api-openapi.yml: declared missing tag: rtcStats API",
     "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "_original/rtcstats-openapi.json: archived document superseded by a larger archived document",
+    "rtcstats-rtcstats-api-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
