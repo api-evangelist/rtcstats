@@ -1,34 +1,54 @@
-generated: '2026-08-09'
+generated: '2026-09-26'
 method: probed
 source: live GET probes of /.well-known/* on every apis.yml and OpenAPI servers[] host
 description: >-
-  No /.well-known/ discovery documents are published on either rtcStats host.
-  Both hosts are served by a Next.js app on Vercel whose catch-all returns an
-  HTTP 404 with an HTML body for every /.well-known/* path, so there is no
-  security.txt (RFC 9116), no OAuth/OIDC discovery, no api-catalog (RFC 9727)
-  and no ai-plugin manifest. Recorded so a later round does not re-probe blind.
+  Three /.well-known/ discovery documents are published on both rtcStats hosts
+  and return identical content on each: an RFC 9116 security.txt, an RFC 9727
+  api-catalog linkset (served as application/linkset+json) and an A2A agent
+  card for the hosted MCP server. OAuth/OIDC discovery, ai-plugin.json and
+  agent.json are not published; those paths return an HTTP 404 with an HTML
+  body. Re-probed 2026-09-26, superseding the 2026-08-09 probe, which predated
+  the rtcStats v1.10 release that shipped these files.
 hosts:
   - host: https://rtcstats.com
     documents:
-      - {path: /.well-known/security.txt, status: 404, content_type: text/html}
+      - {path: /.well-known/security.txt, status: 200, content_type: text/plain}
       - {path: /.well-known/openid-configuration, status: 404, content_type: text/html}
       - {path: /.well-known/oauth-authorization-server, status: 404, content_type: text/html}
       - {path: /.well-known/oauth-protected-resource, status: 404, content_type: text/html}
-      - {path: /.well-known/api-catalog, status: 404, content_type: text/html}
+      - {path: /.well-known/api-catalog, status: 200, content_type: application/linkset+json}
       - {path: /.well-known/ai-plugin.json, status: 404, content_type: text/html}
-      - {path: /.well-known/agent-card.json, status: 404, content_type: text/html}
+      - {path: /.well-known/agent-card.json, status: 200, content_type: application/json}
       - {path: /.well-known/agent.json, status: 404, content_type: text/html}
   - host: https://api.rtcstats.com
     documents:
-      - {path: /.well-known/security.txt, status: 404, content_type: text/html}
+      - {path: /.well-known/security.txt, status: 200, content_type: text/plain}
       - {path: /.well-known/openid-configuration, status: 404, content_type: text/html}
       - {path: /.well-known/oauth-authorization-server, status: 404, content_type: text/html}
       - {path: /.well-known/oauth-protected-resource, status: 404, content_type: text/html}
-      - {path: /.well-known/api-catalog, status: 404, content_type: text/html}
+      - {path: /.well-known/api-catalog, status: 200, content_type: application/linkset+json}
       - {path: /.well-known/ai-plugin.json, status: 404, content_type: text/html}
-      - {path: /.well-known/agent-card.json, status: 404, content_type: text/html}
+      - {path: /.well-known/agent-card.json, status: 200, content_type: application/json}
       - {path: /.well-known/agent.json, status: 404, content_type: text/html}
-found: []
+found:
+  - path: /.well-known/security.txt
+    url: https://rtcstats.com/.well-known/security.txt
+    standard: RFC 9116
+    summary: >-
+      Contact mailto:support@rtcstats.com and https://rtcstats.com/support,
+      Policy https://rtcstats.com/trust, Canonical set, Expires 2027-08-10.
+  - path: /.well-known/api-catalog
+    url: https://rtcstats.com/.well-known/api-catalog
+    standard: RFC 9727
+    summary: >-
+      Linkset with two anchors: https://rtcstats.com (service-desc,
+      service-doc, service-meta) and https://api.rtcstats.com/v1.0/mcp
+      (service-desc, service-doc).
+  - path: /.well-known/agent-card.json
+    url: https://rtcstats.com/.well-known/agent-card.json
+    standard: A2A agent card
+    summary: >-
+      Agent card for the hosted MCP server at https://api.rtcstats.com/v1.0/mcp,
+      protocolVersion 0.3.0, three skills: get_quota, list_sessions, get_session.
 gap:
-  - No security.txt — a two-line RFC 9116 file at https://rtcstats.com/.well-known/security.txt pointing at support@rtcstats.com would publish a disclosure route the API has today only informally.
-  - No /.well-known/api-catalog — the provider already publishes llms.txt and an OpenAPI, so an RFC 9727 catalog linking them is a small step.
+  - No OAuth/OIDC discovery documents. The API authenticates with a bearer token (securitySchemes BearerAuth in the OpenAPI), not an OAuth flow.
