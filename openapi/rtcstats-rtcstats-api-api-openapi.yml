@@ -769,283 +769,28 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Observation:
+    EnrichData:
       type: object
-      description: 'A single trimmed observation: flat and SQL-friendly. Only type and severity are always present; every other field is included only when it has a finite value, never as null.'
+      description: Scores, per-severity observation counts, trimmed observations, and user-agent data. No stored-session fields.
       required:
-      - type
-      - severity
+      - scores
+      - observationsCount
+      - observations
+      - userAgentData
       properties:
-        type:
-          type: string
-          description: Observation type key, e.g. 'turnNoConfig'. The full catalog is available from GET /v1.0/observations.
-        severity:
-          type: string
-          enum:
-          - critical
-          - high
-          - medium
-          - low
-          - info
-          description: Severity of the observation.
-        category:
-          type: string
-          enum:
-          - connections
-          - streams
-          - devices
-          - datachannels
-          - logs
-          - pairs
-          description: Category the observation belongs to.
-        tags:
+        scores:
+          $ref: '#/components/schemas/Scores'
+        observationsCount:
+          $ref: '#/components/schemas/ObservationsCount'
+        observations:
           type: array
+          description: Flat, SQL-friendly observation records. Absent or non-finite values are omitted, never null.
           items:
-            type: string
-          description: Tags attached to the observation (e.g. network, audio, video, connectivity, security).
-        firstSeenAt:
-          type: integer
-          format: int64
-          description: Epoch timestamp (ms) of the first occurrence, truncated to a whole millisecond. Omitted when unknown or non-finite.
-        url:
-          type: string
-          description: Related URL when applicable (e.g. the TURN server URL).
-        property:
-          type: string
-          description: The specific property the observation refers to (e.g. audioLevel).
-        valueInCount:
-          type: number
-          description: Observation value as a count (e.g. number of duplicated lines or occurrences).
-        valueInPercent:
-          type: number
-          description: Observation value as a percentage (e.g. audio/video loss, frames dropped).
-        averageInMs:
-          type: number
-          description: Average value in milliseconds (e.g. jitter, rtt, encode/decode time).
-        maxInMs:
-          type: number
-          description: Maximum value in milliseconds.
-        durationInMs:
-          type: number
-          description: Duration in milliseconds (e.g. TURN/STUN delay, signaling time).
-        durationInSeconds:
-          type: number
-          description: Duration in seconds.
-        durationInPercent:
-          type: number
-          description: Duration of the observation as a percentage of the call.
-    EnrichResponse:
-      type: object
-      description: 'POST /v1.0/enrich response: the scores and observations projection, plus the processor version and a generation timestamp.'
-      required:
-      - data
-      - processorVersion
-      - generatedAt
-      properties:
-        data:
-          $ref: '#/components/schemas/EnrichData'
-        processorVersion:
-          type: string
-          description: Version of the @rtcstats/rtcstats-processor package that produced the analysis (semver, e.g. 1.9.0).
-        generatedAt:
-          type: integer
-          format: int64
-          description: Unix epoch time in milliseconds when the response was generated.
-    SessionListItem:
-      type: object
-      required:
-      - rtcstatsId
-      - createdAt
-      - sessionStart
-      - sessionEnd
-      - title
-      - rtcstatsUrl
-      - abstract
-      properties:
-        rtcstatsId:
-          type: string
-          format: uuid
-        createdAt:
-          type: string
-          format: date-time
-          description: When the session row was created.
-        sessionStart:
-          type:
-          - string
-          - 'null'
-          description: Call start from summary when available.
-        sessionEnd:
-          type:
-          - string
-          - 'null'
-          description: Call end from summary when available.
-        title:
-          type: string
-        rtcstatsUrl:
-          type: string
-          description: Dashboard URL to open the rtcstats session.
-        embedUrl:
-          type: string
-          description: URL to open the session in the embedded viewer. Only present on the Enterprise plan.
-        abstract:
-          allOf:
-          - $ref: '#/components/schemas/SessionAbstract'
-          description: Denormalized session summary used to drive the list filters. <code>null</code> for rows that have not been indexed yet.
-    Error:
-      type: object
-      required:
-      - error
-      - errorCode
-      properties:
-        error:
-          type: string
-        errorCode:
-          type: string
-    ObservationsCount:
-      type: object
-      description: Observation counts grouped by severity. The five values sum to the length of the observations array.
-      required:
-      - critical
-      - high
-      - medium
-      - low
-      - info
-      properties:
-        critical:
-          type: integer
-        high:
-          type: integer
-        medium:
-          type: integer
-        low:
-          type: integer
-        info:
-          type: integer
-    SessionAbstract:
-      type: object
-      description: Denormalized session summary returned alongside each session in the list so clients can render badges or compute their own filters without a second call. <code>observationTypes</code> matches the <code>observationTypes</code> filter input. Every property is always present.
-      required:
-      - observationTypes
-      - observationTags
-      - browser
-      - browserVersion
-      - os
-      - osVersion
-      - conferenceId
-      - sessionId
-      - userId
-      - experienceScore
-      - connectivity
-      - observationsCritical
-      - observationsHigh
-      - observationsMedium
-      - scoreBand
-      properties:
-        observationTypes:
-          type: array
-          items:
-            type: string
-          description: Unique observation type names with severity critical/high/medium.
-        observationTags:
-          type: array
-          items:
-            type: string
-          description: Unique tags carried by critical/high/medium observations only.
-        browser:
-          type:
-          - string
-          - 'null'
-        browserVersion:
-          type:
-          - string
-          - 'null'
-          description: Major browser version only (e.g. <code>142</code>).
-        os:
-          type:
-          - string
-          - 'null'
-        osVersion:
-          type:
-          - string
-          - 'null'
-        conferenceId:
-          type:
-          - string
-          - 'null'
-        sessionId:
-          type:
-          - string
-          - 'null'
-        userId:
-          type:
-          - string
-          - 'null'
-        experienceScore:
-          type:
-          - number
-          - 'null'
-        connectivity:
-          type:
-          - string
-          - 'null'
-        observationsCritical:
-          type: integer
-          minimum: 0
-        observationsHigh:
-          type: integer
-          minimum: 0
-        observationsMedium:
-          type: integer
-          minimum: 0
-        scoreBand:
-          type: string
-          enum:
-          - low
-          - medium
-          - high
-          - unrated
-          description: 'Experience-score band: <code>high</code> (>= 80), <code>medium</code> (60..79), <code>low</code> (< 60), or <code>unrated</code> when there is no score.'
-    SessionsListResponse:
-      type: object
-      required:
-      - total
-      - data
-      properties:
-        total:
-          type: integer
-          minimum: 0
-          description: Number of sessions in <code>data</code>.
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/SessionListItem'
-    McpStreamableHttpTransportError:
-      type: object
-      description: JSON-RPC 2.0 envelope returned by the MCP Streamable HTTP transport for **HTTP-level** failures (before or outside the SSE stream). This is not the same shape as tool errors from `tools/call`, which are delivered with HTTP 200 inside the stream as JSON-RPC responses.
-      required:
-      - jsonrpc
-      - error
-      - id
-      properties:
-        jsonrpc:
-          type: string
-          enum:
-          - '2.0'
-        error:
+            $ref: '#/components/schemas/Observation'
+        userAgentData:
           type: object
-          required:
-          - code
-          - message
-          properties:
-            code:
-              type: integer
-              description: 'JSON-RPC error code. Common values: **-32700** (parse error / invalid message), **-32600** (invalid request, e.g. init rules), **-32000** (bad request: protocol version, missing session header, server not initialized), **-32001** (session not found).'
-            message:
-              type: string
-            data:
-              description: Optional extra detail (e.g. parse failure).
-        id:
-          description: Always `null` for transport-level errors.
+          additionalProperties: true
+          description: Browser, platform, hardware and screen information. Empty object when the dump carries none.
     AnalyzeResponseData:
       type: object
       description: Session payload peer-connections, observations and scores.
@@ -1337,28 +1082,155 @@ components:
             version:
               type: string
               description: AI prompt configuration version used for generation.
-    EnrichData:
+    SessionsListResponse:
       type: object
-      description: Scores, per-severity observation counts, trimmed observations, and user-agent data. No stored-session fields.
       required:
-      - scores
-      - observationsCount
-      - observations
-      - userAgentData
+      - total
+      - data
       properties:
-        scores:
-          $ref: '#/components/schemas/Scores'
-        observationsCount:
-          $ref: '#/components/schemas/ObservationsCount'
-        observations:
+        total:
+          type: integer
+          minimum: 0
+          description: Number of sessions in <code>data</code>.
+        data:
           type: array
-          description: Flat, SQL-friendly observation records. Absent or non-finite values are omitted, never null.
           items:
-            $ref: '#/components/schemas/Observation'
-        userAgentData:
+            $ref: '#/components/schemas/SessionListItem'
+    QuotaResponse:
+      type: object
+      required:
+      - accountName
+      - accountPlan
+      - allowedCredits
+      - remainingCredits
+      properties:
+        accountName:
+          type: string
+          description: Account display name.
+        accountPlan:
+          type: string
+          enum:
+          - developer
+          - trial_developer
+          - enterprise
+          description: Effective plan for the account.
+        allowedCredits:
+          type: number
+          description: Total credits allowed for the account (monthly allocation plus purchased)
+        remainingCredits:
+          type: number
+          description: Credits available.
+    McpStreamableHttpTransportError:
+      type: object
+      description: JSON-RPC 2.0 envelope returned by the MCP Streamable HTTP transport for **HTTP-level** failures (before or outside the SSE stream). This is not the same shape as tool errors from `tools/call`, which are delivered with HTTP 200 inside the stream as JSON-RPC responses.
+      required:
+      - jsonrpc
+      - error
+      - id
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+          - '2.0'
+        error:
           type: object
-          additionalProperties: true
-          description: Browser, platform, hardware and screen information. Empty object when the dump carries none.
+          required:
+          - code
+          - message
+          properties:
+            code:
+              type: integer
+              description: 'JSON-RPC error code. Common values: **-32700** (parse error / invalid message), **-32600** (invalid request, e.g. init rules), **-32000** (bad request: protocol version, missing session header, server not initialized), **-32001** (session not found).'
+            message:
+              type: string
+            data:
+              description: Optional extra detail (e.g. parse failure).
+        id:
+          description: Always `null` for transport-level errors.
+    SessionAbstract:
+      type: object
+      description: Denormalized session summary returned alongside each session in the list so clients can render badges or compute their own filters without a second call. <code>observationTypes</code> matches the <code>observationTypes</code> filter input. Every property is always present.
+      required:
+      - observationTypes
+      - observationTags
+      - browser
+      - browserVersion
+      - os
+      - osVersion
+      - conferenceId
+      - sessionId
+      - userId
+      - experienceScore
+      - connectivity
+      - observationsCritical
+      - observationsHigh
+      - observationsMedium
+      - scoreBand
+      properties:
+        observationTypes:
+          type: array
+          items:
+            type: string
+          description: Unique observation type names with severity critical/high/medium.
+        observationTags:
+          type: array
+          items:
+            type: string
+          description: Unique tags carried by critical/high/medium observations only.
+        browser:
+          type:
+          - string
+          - 'null'
+        browserVersion:
+          type:
+          - string
+          - 'null'
+          description: Major browser version only (e.g. <code>142</code>).
+        os:
+          type:
+          - string
+          - 'null'
+        osVersion:
+          type:
+          - string
+          - 'null'
+        conferenceId:
+          type:
+          - string
+          - 'null'
+        sessionId:
+          type:
+          - string
+          - 'null'
+        userId:
+          type:
+          - string
+          - 'null'
+        experienceScore:
+          type:
+          - number
+          - 'null'
+        connectivity:
+          type:
+          - string
+          - 'null'
+        observationsCritical:
+          type: integer
+          minimum: 0
+        observationsHigh:
+          type: integer
+          minimum: 0
+        observationsMedium:
+          type: integer
+          minimum: 0
+        scoreBand:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+          - unrated
+          description: 'Experience-score band: <code>high</code> (>= 80), <code>medium</code> (60..79), <code>low</code> (< 60), or <code>unrated</code> when there is no score.'
     Scores:
       type: object
       description: The five scores produced by the analyzer. Each is a number or null.
@@ -1398,30 +1270,141 @@ components:
           - number
           - 'null'
           description: Aggregated severity score derived from observations. Null when unavailable.
-    QuotaResponse:
+    Observation:
       type: object
+      description: 'A single trimmed observation: flat and SQL-friendly. Only type and severity are always present; every other field is included only when it has a finite value, never as null.'
       required:
-      - accountName
-      - accountPlan
-      - allowedCredits
-      - remainingCredits
+      - type
+      - severity
       properties:
-        accountName:
+        type:
           type: string
-          description: Account display name.
-        accountPlan:
+          description: Observation type key, e.g. 'turnNoConfig'. The full catalog is available from GET /v1.0/observations.
+        severity:
           type: string
           enum:
-          - developer
-          - trial_developer
-          - enterprise
-          description: Effective plan for the account.
-        allowedCredits:
+          - critical
+          - high
+          - medium
+          - low
+          - info
+          description: Severity of the observation.
+        category:
+          type: string
+          enum:
+          - connections
+          - streams
+          - devices
+          - datachannels
+          - logs
+          - pairs
+          description: Category the observation belongs to.
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags attached to the observation (e.g. network, audio, video, connectivity, security).
+        firstSeenAt:
+          type: integer
+          format: int64
+          description: Epoch timestamp (ms) of the first occurrence, truncated to a whole millisecond. Omitted when unknown or non-finite.
+        url:
+          type: string
+          description: Related URL when applicable (e.g. the TURN server URL).
+        property:
+          type: string
+          description: The specific property the observation refers to (e.g. audioLevel).
+        valueInCount:
           type: number
-          description: Total credits allowed for the account (monthly allocation plus purchased)
-        remainingCredits:
+          description: Observation value as a count (e.g. number of duplicated lines or occurrences).
+        valueInPercent:
           type: number
-          description: Credits available.
+          description: Observation value as a percentage (e.g. audio/video loss, frames dropped).
+        averageInMs:
+          type: number
+          description: Average value in milliseconds (e.g. jitter, rtt, encode/decode time).
+        maxInMs:
+          type: number
+          description: Maximum value in milliseconds.
+        durationInMs:
+          type: number
+          description: Duration in milliseconds (e.g. TURN/STUN delay, signaling time).
+        durationInSeconds:
+          type: number
+          description: Duration in seconds.
+        durationInPercent:
+          type: number
+          description: Duration of the observation as a percentage of the call.
+    Error:
+      type: object
+      required:
+      - error
+      - errorCode
+      properties:
+        error:
+          type: string
+        errorCode:
+          type: string
+    SessionListItem:
+      type: object
+      required:
+      - rtcstatsId
+      - createdAt
+      - sessionStart
+      - sessionEnd
+      - title
+      - rtcstatsUrl
+      - abstract
+      properties:
+        rtcstatsId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+          description: When the session row was created.
+        sessionStart:
+          type:
+          - string
+          - 'null'
+          description: Call start from summary when available.
+        sessionEnd:
+          type:
+          - string
+          - 'null'
+          description: Call end from summary when available.
+        title:
+          type: string
+        rtcstatsUrl:
+          type: string
+          description: Dashboard URL to open the rtcstats session.
+        embedUrl:
+          type: string
+          description: URL to open the session in the embedded viewer. Only present on the Enterprise plan.
+        abstract:
+          allOf:
+          - $ref: '#/components/schemas/SessionAbstract'
+          description: Denormalized session summary used to drive the list filters. <code>null</code> for rows that have not been indexed yet.
+    ObservationsCount:
+      type: object
+      description: Observation counts grouped by severity. The five values sum to the length of the observations array.
+      required:
+      - critical
+      - high
+      - medium
+      - low
+      - info
+      properties:
+        critical:
+          type: integer
+        high:
+          type: integer
+        medium:
+          type: integer
+        low:
+          type: integer
+        info:
+          type: integer
     ObservationTypesResponse:
       type: object
       required:
@@ -1497,6 +1480,23 @@ components:
           - audio
           - inbound
           - peripheral
+    EnrichResponse:
+      type: object
+      description: 'POST /v1.0/enrich response: the scores and observations projection, plus the processor version and a generation timestamp.'
+      required:
+      - data
+      - processorVersion
+      - generatedAt
+      properties:
+        data:
+          $ref: '#/components/schemas/EnrichData'
+        processorVersion:
+          type: string
+          description: Version of the @rtcstats/rtcstats-processor package that produced the analysis (semver, e.g. 1.9.0).
+        generatedAt:
+          type: integer
+          format: int64
+          description: Unix epoch time in milliseconds when the response was generated.
   securitySchemes:
     BearerAuth:
       type: http
