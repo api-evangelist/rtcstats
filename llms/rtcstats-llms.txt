@@ -1,6 +1,6 @@
 # rtcStats
 
-> AI-powered WebRTC session analysis. Upload a WebRTC dump (webrtc-internals or rtcstats file) or connect via API/MCP. rtcStats reads the dump and returns high level metrics, Observations, Deductions, an Experience Score, and a plain-English AI summary of what went wrong on the call.
+> AI-powered WebRTC session analysis. Upload a WebRTC dump (webrtc-internals or rtcstats file) or connect via API/MCP. rtcStats reads the dump and returns high level metrics, Observations, an Experience Score, and a plain-English AI summary of what went wrong on the call.
 
 rtcStats is a SaaS for developers troubleshooting and monitoring WebRTC applications. The collection layer (rtcstats-js + rtcstats-server) is open source and self-hosted. The analysis layer runs on rtcstats.com. No vendor lock-in: customers choose what to send.
 
@@ -12,10 +12,20 @@ The pitch: "AI reads the dump so you don't have to."
 - [API reference](https://rtcstats.com/api-docs): REST endpoints, auth, error codes, credit consumption rules
 - [API reference (Markdown)](https://rtcstats.com/api-docs.md): server-rendered Markdown version of the API reference for non-browser clients (no JavaScript required)
 - [OpenAPI spec](https://rtcstats.com/api/openapi): machine-readable OpenAPI 3.0 JSON (same content as the API reference, parseable by AI agents)
-- [MCP server](https://rtcstats.com/integrations/mcp): Model Context Protocol (Anthropic's agent standard, not a media control plane) server for WebRTC stats. Streamable HTTP endpoint, tools (get_quota, list_sessions, get_session), Bearer auth. Developer plan.
+- [MCP server](https://rtcstats.com/integrations/mcp): Model Context Protocol (Anthropic's agent standard, not a media control plane) server for WebRTC stats. Streamable HTTP endpoint, tools (get_quota, list_sessions, get_session, get_observation_explanation), Bearer auth. Developer plan.
 - [Integration guide](https://rtcstats.com/kb/getting-started/integration-guide): connecting rtcstats-js and rtcstats-server to rtcstats.com
 - [rtcstats-js](https://github.com/rtcstats/rtcstats): client SDK for WebRTC apps
 - [rtcstats-server](https://github.com/rtcstats/rtcstats): self-hosted collector server
+
+## Quickstart
+
+1. Create an application token in the dashboard under Settings > Applications (Developer plan or above) and send it as `Authorization: Bearer <token>` on every call.
+2. `GET https://api.rtcstats.com/v1.0/quota` to verify the token and read the remaining credits.
+3. `POST https://api.rtcstats.com/v1.0/analyze` with the raw dump as the body (`Content-Type: application/octet-stream`, one credit); add `?save=true` to store the session.
+4. `GET https://api.rtcstats.com/v1.0/sessions` to list stored sessions, then `GET /v1.0/sessions/{rtcstatsId}` for the full analysis of one.
+5. Connect an MCP client to `https://api.rtcstats.com/v1.0/mcp` with the same Bearer token (tools: get_quota, list_sessions, get_session, get_observation_explanation).
+
+Full contract: OpenAPI 3.0 JSON at https://rtcstats.com/api/openapi (Markdown rendering at https://rtcstats.com/api-docs.md).
 
 ## Guides
 
@@ -23,7 +33,7 @@ The pitch: "AI reads the dump so you don't have to."
 
 ## Analysis Output Schema
 
-The session payload returned by the MCP `get_session` tool (validated against live staging data, schema version 6.3):
+The session payload returned by the MCP `get_session` tool, by `GET /v1.0/sessions/{rtcstatsId}` and by `POST /v1.0/analyze` (identical `data` object; the version that produced it is the envelope `processorVersion`):
 
 ```json
 {
@@ -37,11 +47,11 @@ The session payload returned by the MCP `get_session` tool (validated against li
     "callStart": "ISO8601",
     "callEnd": "ISO8601",
     "durationMs": "number",
-    "experienceScore": "float 0.0-100.0",
+    "experienceScore": "float 0.0-100.0 or null",
     "audioScore": "float or null",
     "videoScore": "float or null",
-    "connectivityScore": "float",
-    "connectivity": "string (e.g. 'DIRECT/UDP')",
+    "connectivityScore": "float or null",
+    "connectivity": "string (e.g. 'DIRECT/UDP'; local candidate only, a remote relay alone is DIRECT)",
     "connectionIPType": "string ('IPv4' | 'IPv6'), omitted when unresolved",
     "observationsCount": {
       "critical": "number",
@@ -52,7 +62,7 @@ The session payload returned by the MCP `get_session` tool (validated against li
     },
     "observations": [
       {
-        "type": "string (observation type key, e.g. 'turnNoConfig', 'slowDtlsEstablishment'; full catalog at GET /v1.0/observations)",
+        "type": "string (observation type key, e.g. 'turnNoConfig', 'slowDtlsEstablishment'; open set, ignore a type you do not know)",
         "severity": "info | low | medium | high | critical",
         "category": "string (e.g. 'connections', 'streams', 'pairs')",
         "tags": ["string (e.g. 'network', 'connectivity', 'audio')"],
@@ -70,12 +80,18 @@ The session payload returned by the MCP `get_session` tool (validated against li
         "firstSeenAt": "integer epoch ms, omitted when no source timestamp is known"
       }
     ],
+    "features": {
+      "devices": "object (device feature flags, e.g. FEATURE_MICROPHONE_USB; FEATURE_SCREEN_RESOLUTION is a string)",
+      "globals": "object (session-wide network/media flags, e.g. use_vpn, udp_blocked; audioIn/videoIn/audioOut/videoOut and network_interfaces are counts)",
+      "audio": "object (firstTimestampFor* epoch ms for first sound/audible sound/audible voice, in and out; null when never observed)",
+      "client": "object (client-level rtcstats-features; only computed keys are present, absent means not known; present only when the session has a stored features file)"
+    },
     "aiSummary": {
       "model": "string (e.g. 'anthropic/claude-haiku-4.5')",
       "summary": {
         "highlight": "markdown string (one-line overall summary)",
         "network": "markdown string",
-        "networkScore": "string ('excellent' | 'good' | 'acceptable' | 'poor' | 'bad' | 'mediocre')",
+        "networkScore": "string ('excellent' | 'good' | 'acceptable' | 'poor' | 'bad')",
         "media": "markdown string",
         "mediaScore": "string (same values as networkScore)",
         "user": "markdown string",
@@ -84,8 +100,13 @@ The session payload returned by the MCP `get_session` tool (validated against li
       "version": "string (AI prompt configuration version)"
     },
     "pConnectionsNumber": "number",
-    "pConnections": "object keyed by connection id — detailed per-connection WebRTC stats",
-    "aggregatedStats": "object — session-wide aggregated metrics with self-describing keys <metric>_<scope>_<agg>_<unit>: metric = jitter|rtt|bitrate|packetLoss|mos; scope = in_audio|out_audio|in_video|out_video; agg = avg|min|max|p5|p95|stddev; unit = ms (jitter, rtt), kbps (bitrate), percent (packetLoss), score (mos, 0-4.5, where 0 means unusable transport). Example: rtt_out_audio_avg_ms. Session-level weighted averages: jitter_avg_ms, rtt_avg_ms. Stream counts: in_audio_count, out_audio_count, in_video_count, out_video_count. Since schema 6.9 the former unitless keys (e.g. rtt_out_audio, in_audio) are no longer present",
+    "pConnections": "object keyed by connection id: detailed per-connection WebRTC stats, plus the rtcstats-features catalogue facts for that peer connection (absent means not known); hasStatistics false = dump holds no getStats sample for it, entry built from logs only",
+    "streams": "object keyed by stream key ${pid}-${sid}: per-stream metrics, plus the rtcstats-features catalogue facts for that track (absent means not known)",
+    "transports": "object keyed by connection id then transport id: ICE transports with their candidate pairs and their DTLS/SRTP parameters",
+    "tagClouds": "array of observation tags with their totals and per-severity breakdown",
+    "metadata": "object: clientProtocol and custom, plus conference/session/user when the rtcstats token carried them",
+    "from": "object (continent, country, city): coarse client location, absent for dumps carrying no location data",
+    "aggregatedStats": "object — session-wide aggregated metrics with self-describing keys <metric>_<scope>_<agg>_<unit>: metric = jitter|rtt|bitrate|packetLoss|mos; scope = in_audio|out_audio|in_video|out_video; agg = avg|min|max|p5|p95|stddev; unit = ms (jitter, rtt), kbps (bitrate), percent (packetLoss), score (mos, 1-4.5). Example: rtt_out_audio_avg_ms. Session-level weighted averages: jitter_avg_ms, rtt_avg_ms. Stream counts: in_audio_count, out_audio_count, in_video_count, out_video_count. Since schema 6.9 the former unitless keys (e.g. rtt_out_audio, in_audio) are no longer present",
     "userAgentData": { "platform": "string", "mobile": "boolean", "brands": [...] },
     "... additional raw WebRTC stats fields": "present in the full payload"
   }
@@ -100,24 +121,35 @@ Number formatting: timestamps are integers at millisecond scale; every other num
 
 `POST /v1.0/analyze` does not store the session by default: pass `?save=true` to persist it (the response then includes `rtcstatsId` and `rtcstatsUrl`).
 
-`POST /v1.0/analyze` also speaks the same chunked protocol as `POST /v1.0/upload`, for dumps above the ~4.5MB request-body cap: send `multipart/form-data` chunks (`chunk`, `fileId`, `chunkIndex`; each returns `{"success": true}` and consumes no credit), then a JSON assemble request `{"assemble": true, "fileId": "...", "fileName": "optional"}` (at most 1KB). The assembled dump runs through the normal analyze pipeline (one credit). With `?save=true` on the assemble request, `fileName` names the stored session and is mirrored in the response `data.fileName` / `data.title` when provided. Assemble detection is shape-based (small JSON body matching that exact shape), so raw JSON dump bodies keep working unchanged.
+`POST /v1.0/analyze` also speaks the same chunked protocol as `POST /v1.0/upload`, for any dump too large for one request body: send `multipart/form-data` chunks (`chunk`, `fileId`, `chunkIndex`; each returns `{"success": true}`, consumes no credit, 3MB max per chunk and 1MB recommended), then a JSON assemble request `{"assemble": true, "fileId": "...", "fileName": "optional"}` (at most 1KB). The assembled dump runs through the normal analyze pipeline (one credit). With `?save=true` on the assemble request, `fileName` names the stored session and is mirrored in the response `data.fileName` / `data.title` when provided. Assemble detection is shape-based (small JSON body matching that exact shape), so raw JSON dump bodies keep working unchanged.
+
+File size limit, per account plan: only the bytes you send are measured, so a gzipped dump counts as its compressed size, never its decompressed size; on a chunked upload the `413` `file_too_large` lands on the chunk that crosses the limit, not at assemble, and the chunks already stored are then dropped.
 
 `POST /v1.0/enrich` is for a rtcstats-server or any server that only needs the observations and scores projection: same Bearer auth and one-credit cost as `analyze`, but it returns only `{ data: { scores, observationsCount, observations, userAgentData }, processorVersion, generatedAt }` and never stores the session. `scores` are the five analyzer scores (`experienceScore`, `audioScore`, `videoScore`, `connectivityScore`, `observationsScore`; each a number or null). `observations` are flat, SQL-friendly trimmed records: only `type` and `severity` are always present, every other field (`category`, `tags`, `firstSeenAt`, `url`, `property`, `valueInCount`, `valueInPercent`, `averageInMs`, `maxInMs`, `durationInMs`, `durationInSeconds`, `durationInPercent`) is omitted when absent, never null. `observationsCount` (critical/high/medium/low/info) sums to `observations.length`. `processorVersion` is the `@rtcstats/rtcstats-processor` version and `generatedAt` is epoch ms. The payload is full and unconditional (not plan-gated). `enrich` uses the same chunked upload protocol as `upload` and `analyze` (multipart chunks then a JSON assemble request `{"assemble": true, "fileId": "..."}`; a raw dump body also works for small files); MOS follows the account token settings.
 
+Error codes, the complete `/v1.0/*` vocabulary: `authentication` (401), `forbidden` (403), `insufficient_scope` (403), `invalid_request` (400), `no_credits` (402), `file_too_large` (413), `parsing_issue` (415), `not_found` (404), `reprocess_failed` (422), `other_issue` (415 or 500), `rate_limited` (429), `gone` (410, removed endpoint, do not retry); every error body is `{ error, errorCode }`, branch on `errorCode`, never on `error`.
+
+Rate limits, per account over 60 s windows: 30 ingest requests per minute (`upload` assemble, `analyze` and `enrich` raw or assemble), 120 read requests (`sessions` list/get/delete, `quota`, `observations/{type}`, MCP tool calls) and 600 multipart chunks; over the limit REST returns `429` with `errorCode` `rate_limited`, `Retry-After` (seconds) and `X-RateLimit-Limit` / `X-RateLimit-Remaining` / `X-RateLimit-Reset` (the three headers are on every response emitted after the check, including the `403` `insufficient_scope`; only the `401` and the plan `403` `forbidden` carry none, being refused before the check, and all three are absent when the limiter fails open), MCP tool calls return an `isError` result, `initialize` and `tools/list` are never limited.
+
 ## MCP
 
-Connect an MCP client to `https://api.rtcstats.com/v1.0/mcp` (POST, stateless JSON-RPC). Include `Authorization: Bearer <application-jwt>` on requests that invoke tools. Requires Developer plan or above. Get a token at Settings > Applications.
+Connect an MCP client to `https://api.rtcstats.com/v1.0/mcp` (POST, stateless JSON-RPC). Include `Authorization: Bearer <application-jwt>` on every request, `initialize` included: a missing or invalid token is HTTP `401` with `WWW-Authenticate`, a plan without API access `403` `forbidden`. Requires Developer plan or above. Get a token at Settings > Applications.
 
 Tools:
-- `get_quota` — returns `{allowedCredits, remainingCredits}`. `remainingCredits` is the combined monthly + purchased top-up pool.
-- `list_sessions` — returns `{total, data: [{rtcstatsId, createdAt, sessionStart, sessionEnd, title, rtcstatsUrl, embedUrl, abstract}]}`. `rtcstatsId` and `rtcstatsUrl` are always present. `sessionStart` and `sessionEnd` can be null. `embedUrl` is omitted on non-Enterprise plans. `abstract` is the denormalized session summary used to drive the filters (browser/browserVersion/os/osVersion, userId/conferenceId/sessionId, experienceScore, scoreBand `"low"|"medium"|"high"|"unrated"`, connectivity, observationTypes/observationTags, observationsCritical/High/Medium counts). `observationTypes` matches the `observationTypes` filter. Every key is always present when `abstract` is non-null; `abstract` itself is `null` for rows not yet indexed. Optional filters: `name` (array, case-insensitive substring on the session title, ANY of, up to 20), `observationTypes` (array, exact observation type names, ANY of, up to 20; only critical/high/medium observations are indexed; full catalog at GET /v1.0/observations), `observationTags` (array, ANY of: connectivity/security/audio/video/datachannel/outbound/inbound/peripheral/behavior/network/configuration/cpu/bug; tags of critical/high/medium observations only), `os`, `browser`, `browserVersion` (major version only, e.g. "142"), `userId`, `conferenceId`, `sessionId` (exact match), `hasCritical`/`hasHigh`/`hasMedium` (boolean, sessions with that observation severity), `hasLowScore` (experience score < 60) / `hasMediumScore` (60-79) / `hasHighScore` (>= 80). Different filters are AND-combined; multiple values within one filter are OR-combined. Score bands match the dashboard score colors. The REST endpoint `GET /v1.0/sessions` accepts the same filters as query params (array filters repeated or comma-separated; booleans as `?hasCritical=true`).
-- `get_session` — input `{rtcstatsId: UUID}`, returns `{rtcstatsId, rtcstatsUrl, embedUrl, data}`. `rtcstatsId` and `rtcstatsUrl` are always present. `embedUrl` is the embeddable viewer URL — only present on Enterprise plans (omitted otherwise). `data` contains the full analysis: summary, observations, deductions, experience score, AI summary.
+- `get_quota`: returns `{accountName, accountPlan, allowedCredits, remainingCredits, maxFileSizeBytes, maxChunkSizeBytes}`. `maxFileSizeBytes` is the uploaded bytes allowed per dump (`null` when unlimited) and `maxChunkSizeBytes` the per-chunk cap: read them before uploading rather than discovering the limit through a `413`. `accountPlan` is the effective plan (`developer`, `trial_developer`, `enterprise`). `remainingCredits` is the combined monthly + purchased top-up pool.
+- `list_sessions`: returns `{total, totalCount, page, limit, totalPages, hasMore, data: [{rtcstatsId, createdAt, sessionStart, sessionEnd, title, rtcstatsUrl, embedUrl, abstract}]}`. `rtcstatsId` and `rtcstatsUrl` are always present. `sessionStart` and `sessionEnd` can be null. `embedUrl` is omitted on non-Enterprise plans. `abstract` is the denormalized session summary used to drive the filters (browser/browserVersion/os/osVersion, userId/conferenceId/sessionId, experienceScore, scoreBand `"low"|"medium"|"high"|"unrated"`, connectivity, observationTypes/observationTags, observationsCritical/High/Medium counts). `observationTypes` matches the `observationTypes` filter. Every key is always present when `abstract` is non-null; `abstract` itself is `null` for rows not yet indexed. Optional filters: `name` (array, case-insensitive substring on the session title, ANY of, up to 20), `observationTypes` (array, exact observation type names, ANY of, up to 20; only critical/high/medium observations are indexed; open set, read the values from `abstract.observationTypes` and from `data.observations[].type`), `observationTags` (array, ANY of: connectivity/security/audio/video/datachannel/outbound/inbound/peripheral/behavior/network/configuration/cpu/bug; tags of critical/high/medium observations only), `os`, `browser`, `browserVersion` (major version only, e.g. "142"), `userId`, `conferenceId`, `sessionId` (exact match), `hasCritical`/`hasHigh`/`hasMedium` (boolean, sessions with that observation severity), `hasLowScore` (experience score < 60) / `hasMediumScore` (60-79) / `hasHighScore` (>= 80). Different filters are AND-combined; multiple values within one filter are OR-combined. Score bands match the dashboard score colors. The REST endpoint `GET /v1.0/sessions` accepts the same filters as query params (array filters repeated or comma-separated; booleans as `?hasCritical=true`). Pagination: `limit` (1-1000, default 100) and `page` (default 1), newest first; `total` counts `data`, `totalCount` counts all matches; fetch the next page while `hasMore`; out-of-range values are `400` `invalid_request` (tool error on MCP).
+- `get_session`: input `{rtcstatsId: UUID}`, returns `{rtcstatsId, rtcstatsUrl, processorVersion, embedUrl, data}`. `rtcstatsId`, `rtcstatsUrl` and `processorVersion` are always present. `embedUrl` is the embeddable viewer URL, only present on Enterprise plans (omitted otherwise). `data` is the session payload shown under Analysis Output Schema above, identical to what `GET /v1.0/sessions/{rtcstatsId}` returns.
+- `get_observation_explanation`: input `{type}` (exact, case-sensitive), returns the same object as `GET /v1.0/observations/{type}`; an unknown type is a tool error.
 
 MCP tools are read-only and do not consume analyze credits.
 
-The REST endpoint `GET /v1.0/observations` (Bearer, same plan gating as quota, no credits) returns the catalog of observation types the analyzer can emit: `{total, data: [{type, title, severity: [...], tags: [...]}]}` where `type` matches `data.observations[].type` and the `observationTypes` filter, and `severity`/`tags` are the full arrays of values each type can carry.
+`GET /v1.0/observations` was removed on 2026-09-18 and answers `410` `gone` with a `Sunset` header, with or without a token: there is no published list of observation types, read them from `data.observations[].type` and `abstract.observationTypes`.
+
+`GET /v1.0/observations/{type}` returns the explanation of one type, `{type, title, description, severities, tags, updatedAt, sections: [{heading, markdown}], related: [{type, title}]}` (Markdown, absolute links), read bucket, no credit; `404` `not_found` for an unknown or wrong-case type.
 
 **Token setup:** Settings is in the left-hand sidebar. Go to the Applications tab and create a new application. The token is shown once at creation and cannot be read back — copy it immediately. Store it as your `Authorization: Bearer` value. If lost, create a new application.
+
+**Token scope:** a token is created `full` or `read_only`; a read-only one passes every read and is refused with `403` `insufficient_scope` on `POST /v1.0/upload`, `POST /v1.0/analyze`, `POST /v1.0/enrich` and `DELETE /v1.0/sessions/{rtcstatsId}`.
 
 ## Pricing
 
@@ -141,5 +173,5 @@ Open source (self-hosted by the customer):
 
 SaaS (rtcstats.com):
 - Receives sessions from rtcstats-server, manual file upload, or direct API
-- Runs analysis pipeline: Observations → Deductions → Experience Score → AI Summary
+- Runs analysis pipeline: Observations → Experience Score → AI Summary
 - Customer controls sampling: what gets sent, when, for which users

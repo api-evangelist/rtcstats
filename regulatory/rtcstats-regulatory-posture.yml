@@ -1,0 +1,29 @@
+generated: '2026-09-28'
+method: probed
+source: https://rtcstats.com/privacy
+signals:
+  data_subject_request:
+    quote: "Your rights with respect to your information"
+    url: https://rtcstats.com/privacy#your-rights
+    section: "Your rights"
+    note: outlines data subject rights and how to exercise them.
+  data_retention:
+    quote: "We keep this content for at least the retention period of the plan you are using. If you delete your account, we'll delete the content within 60 days."
+    url: https://rtcstats.com/privacy#data-retention
+    section: "Data retention"
+    note: specifies retention period and deletion timeline.
+  data_residency:
+    quote: "Location of site and data"
+    url: https://rtcstats.com/privacy#location
+    section: "Location of site and data"
+    note: indicates where data is stored.
+  eu_transfer:
+    quote: "When transferring personal data from the EU"
+    url: https://rtcstats.com/privacy#eu-transfer
+    section: "When transferring personal data from the EU"
+    note: addresses cross-border data transfers.
+  incident_notification:
+    quote: "When you sign up on rtcstats.com, we ask for identifying information... We log all account access by full IP address for security and fraud prevention purposes"
+    url: https://rtcstats.com/privacy#when-we-access
+    section: "When we access or disclose your information"
+    note: mentions security monitoring but no explicit breach notification.

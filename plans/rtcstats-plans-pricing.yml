@@ -1,0 +1,87 @@
+generated: '2026-09-28'
+method: searched
+generator: extract-docs-artifacts.py (local)
+source: https://rtcstats.com/pricing
+sources:
+- https://rtcstats.com/pricing
+- https://rtcstats.com/kb/usage-and-billing
+name: rtcStats pricing
+audience: developer-api
+pricing_basis: per-seat
+plans:
+- name: Free
+  price_text: $0 /month
+  price: 0
+  description: Free plan with limited credits and features
+  features:
+  - Web client SDK
+  - Server collector
+  - 3 team members
+  - 10 credits per month
+  - 1 month retention
+  - Manual dashboard uploads
+  - webrtc-internals support
+  - rtcstats support
+  - Public sharing
+  limits:
+  - name: team_members
+    limit_text: 3 team members
+  - name: credits
+    limit_text: 10 credits
+  - name: retention
+    limit_text: 1 month retention
+- name: Developer
+  price_text: $199 /month
+  price: 199
+  description: Root‑cause analysis for every session
+  features:
+  - Web client SDK
+  - Server collector
+  - 10 team members
+  - 500 credits per month
+  - 3 months retention
+  - Manual dashboard uploads
+  - webrtc-internals support
+  - rtcstats support
+  - Public sharing
+  - Experience score
+  - AI summaries
+  - Observations
+  - Deductions
+  - API and MCP access
+  limits:
+  - name: team_members
+    limit_text: 10 team members
+  - name: credits
+    limit_text: 500 credits
+  - name: retention
+    limit_text: 3 months retention
+- name: Enterprise
+  price_text: $999 /month
+  price: 999
+  description: WebRTC observability at scale
+  features:
+  - Web client SDK
+  - Server collector
+  - 50 team members
+  - 5,000 credits per month
+  - 3 months retention
+  - Manual dashboard uploads
+  - webrtc-internals support
+  - rtcstats support
+  - Whitelabel sharing
+  - Experience score
+  - AI summaries
+  - Observations
+  - Deductions
+  - API and MCP access
+  - Embeddable viewer
+  - 3rd party storage
+  limits:
+  - name: team_members
+    limit_text: 50 team members
+  - name: credits
+    limit_text: 5,000 credits
+  - name: retention
+    limit_text: 3 months retention
+docs: https://rtcstats.com/pricing

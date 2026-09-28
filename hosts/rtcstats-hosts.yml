@@ -1,0 +1,88 @@
+generated: '2026-09-28'
+method: derived
+source: the pre-flight dossier, apis.yml pointers, spec servers, well-known, vendors -- nothing fetched here
+generator: derive-hosts.py
+summary:
+  hosts: 4
+  own: 3
+  other_domain: 0
+  platform: 1
+  roles:
+  - api
+  - portal
+  - source
+  - website
+hosts:
+- host: api.rtcstats.com
+  found_by:
+  - apis[]
+  - probed
+  - site-links
+  - contract-discovery
+  - well-known
+  types: []
+  serves:
+  - api
+  registrable_domain: rtcstats.com
+  role: api
+  relation: own
+- host: github.com
+  found_by:
+  - pointer
+  - docs-index
+  types:
+  - IssueTracker
+  - Releases
+  - License
+  - GitHubOrganization
+  - SourceCode
+  serves:
+  - docs
+  registrable_domain: github.com
+  role: source
+  relation: platform
+- host: rtcstats.com
+  found_by:
+  - pointer
+  - apis[]
+  - probed
+  - site-links
+  - docs-index
+  - spec-found
+  - contract-discovery
+  - well-known
+  - vendor-detect
+  types:
+  - Compliance
+  - Security
+  - DeveloperPortal
+  - Documentation
+  - APIReference
+  - GettingStarted
+  - Support
+  - Blog
+  - ChangeLog
+  - Pricing
+  - SignUp
+  - TermsOfService
+  - PrivacyPolicy
+  serves:
+  - docs
+  - spec
+  - hosting
+  vendor: vercel
+  registrable_domain: rtcstats.com
+  role: portal
+  relation: own
+- host: www.rtcstats.com
+  found_by:
+  - pointer
+  - probed
+  - contract-discovery
+  - well-known
+  types:
+  - Website
+  serves: []
+  registrable_domain: rtcstats.com
+  role: website
+  relation: own

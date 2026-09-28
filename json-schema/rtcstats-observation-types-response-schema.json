@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/rtcstats/main/json-schema/rtcstats-observation-types-response-schema.json",
+  "title": "ObservationTypesResponse",
+  "x-generated": "2026-09-28",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/rtcstats-rtcstats-api-api-openapi.yml#/components/schemas/ObservationTypesResponse",
+  "type": "object",
+  "required": [
+    "total",
+    "data"
+  ],
+  "properties": {
+    "total": {
+      "type": "integer",
+      "description": "Number of observation types in the catalog."
+    },
+    "data": {
+      "type": "array",
+      "description": "Catalog of observation types, sorted by `type`.",
+      "items": {
+        "type": "object",
+        "required": [
+          "type",
+          "title",
+          "severity",
+          "tags"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Unique identifier type of the observation, e.g. 'cpuPressure'."
+          },
+          "title": {
+            "type": "string",
+            "description": "Human-readable title."
+          },
+          "severity": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "critical",
+                "high",
+                "medium",
+                "low",
+                "info"
+              ]
+            },
+            "description": "All severities this observation type can emit."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "connectivity",
+                "security",
+                "audio",
+                "video",
+                "datachannel",
+                "outbound",
+                "inbound",
+                "peripheral",
+                "behavior",
+                "network",
+                "configuration",
+                "cpu",
+                "bug"
+              ]
+            },
+            "description": "All tags this observation type can carry."
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,5 +1,5 @@
 ---
-name: Analyze a WebRTC dump with rtcStats
+name: rtcstats-analyze-a-webrtc-dump
 description: Submit a webrtc-internals or rtcstats dump to rtcStats and read back the Experience Score, Observations and AI summary — including the chunked upload path for dumps over the request-body cap.
 api: openapi/rtcstats-api-openapi.yml
 operations: [analyze, upload, session, quota]

@@ -2,7 +2,7 @@ overlay: 1.0.0
 info:
   title: API Evangelist enhancements for the rtcStats API
   version: 1.0.0
-extends: openapi/rtcstats-api-openapi.yml
+extends: ../openapi/_original/rtcstats-api-openapi.yml
 x-provenance:
   generated: '2026-08-09'
   method: generated

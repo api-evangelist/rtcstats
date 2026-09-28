@@ -1,5 +1,5 @@
 ---
-name: Triage bad WebRTC sessions in rtcStats
+name: rtcstats-triage-bad-sessions
 description: Find the sessions that actually went wrong — filter stored rtcStats sessions by observation type, tag, severity, score band, browser/OS or customer identifier, then pull the full analysis for the worst ones.
 api: openapi/rtcstats-api-openapi.yml
 operations: [observations, listSessions, session, deleteSession]

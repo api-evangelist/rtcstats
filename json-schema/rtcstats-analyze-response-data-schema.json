@@ -1,0 +1,396 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/rtcstats/main/json-schema/rtcstats-analyze-response-data-schema.json",
+  "title": "AnalyzeResponseData",
+  "description": "Session payload peer-connections, observations and scores.",
+  "x-generated": "2026-09-28",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/rtcstats-rtcstats-api-api-openapi.yml#/components/schemas/AnalyzeResponseData",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "callStart": {
+      "type": "string",
+      "format": "date-time",
+      "description": "First observed call activity timestamp."
+    },
+    "callEnd": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last observed call activity timestamp."
+    },
+    "durationMs": {
+      "type": "integer",
+      "description": "Total call duration in milliseconds."
+    },
+    "userAgentData": {
+      "type": "object",
+      "description": "Browser, platform, hardware and screen information."
+    },
+    "pConnectionsNumber": {
+      "type": "integer",
+      "description": "Number of RTCPeerConnections observed during the session."
+    },
+    "pConnections": {
+      "type": "object",
+      "description": "Per-PeerConnection details keyed by peer connection id.",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "streams": {
+      "type": "object",
+      "description": "Peer-stream metrics (audio, video, data) keyed by stream id.",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "transports": {
+      "type": "object",
+      "description": "ICE transport and candidate-pair information per PeerConnection.",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "aggregatedStats": {
+      "type": "object",
+      "description": "Session-wide aggregated metrics with self-describing keys <metric>_<scope>_<agg>_<unit>: metric = jitter|rtt|bitrate|packetLoss|mos; scope = in_audio|out_audio|in_video|out_video; agg = avg|min|max|p5|p95|stddev; unit = ms (jitter, rtt), kbps (bitrate), percent (packetLoss), score (mos, 0-4.5, where 0 means unusable transport). Example: rtt_out_audio_avg_ms. Session-level weighted averages: jitter_avg_ms, rtt_avg_ms. Stream counts: in_audio_count, out_audio_count, in_video_count, out_video_count. Since schema 6.9 the former unitless keys (e.g. rtt_out_audio, in_audio) are no longer present."
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Client protocol and custom flags."
+    },
+    "connectivity": {
+      "type": "string",
+      "description": "Resolved connectivity type for the session."
+    },
+    "connectionIPType": {
+      "type": "string",
+      "enum": [
+        "IPv4",
+        "IPv6"
+      ],
+      "description": "IP family of the selected connection. Absent when it could not be resolved."
+    },
+    "uploadTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the dump was analyzed/processed (ISO 8601)."
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable session title (often derived from the call URL)."
+    },
+    "fileName": {
+      "type": "string",
+      "description": "Internal name of the stored dump file."
+    },
+    "fileSize": {
+      "type": "integer",
+      "description": "Size of the uploaded dump in bytes."
+    },
+    "experienceScore": {
+      "type": "number",
+      "format": "float",
+      "description": "Overall experience score (0-100). 0 when there is no media data to score against."
+    },
+    "audioScore": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "format": "float",
+      "description": "Audio quality score (1-5). Null when no audio stream is present."
+    },
+    "videoScore": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "format": "float",
+      "description": "Video quality score (1-5). Null when no video stream is present."
+    },
+    "connectivityScore": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "format": "float",
+      "description": "Connectivity score (1-5). Null when no peer connection produced a connectivity score (e.g. no valid candidate pair)."
+    },
+    "observationsScore": {
+      "type": "integer",
+      "description": "Aggregated severity score derived from observations. Maximum (40) when no observations were produced; lower as severity penalties are applied."
+    },
+    "tagClouds": {
+      "type": "array",
+      "description": "Tag-cloud entries derived from the session.",
+      "items": {
+        "type": "object",
+        "required": [
+          "tag",
+          "total"
+        ],
+        "properties": {
+          "tag": {
+            "type": "string"
+          },
+          "total": {
+            "type": "number"
+          },
+          "severity": {
+            "type": "string",
+            "description": "Optional severity bucket for the tag."
+          }
+        }
+      }
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Session identifier (same as rtcstatsId)."
+    },
+    "created_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "description": "Row creation timestamp. Null on `POST /analyze` without `?save=true` (the dump is not persisted)."
+    },
+    "uploaded_by": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uuid",
+      "description": "Identifier of the account/user that uploaded the dump. Null on `POST /analyze` without `?save=true`."
+    },
+    "uploaded_by_email": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "email",
+      "description": "Email of the uploader. Null on `POST /analyze` without `?save=true`."
+    },
+    "public_link": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Share token for the public viewer."
+    },
+    "description": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Optional free-text description."
+    },
+    "tags": {
+      "type": "array",
+      "description": "User-defined tags attached to the session.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "observations": {
+      "type": "array",
+      "description": "Detected issues and insights. Each entry is an observation with a type, a severity, a category, a source object identifying what it concerns, and optional supporting values/indicators.",
+      "items": {
+        "type": "object",
+        "description": "A single detected observation.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Observation type key, e.g. 'turnNoConfig', 'unusedStream', 'framesDropped'. The full catalog (with possible severities and tags) is available from GET /v1.0/observations."
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low",
+              "info"
+            ],
+            "description": "Severity of the observation."
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "connections",
+              "streams",
+              "devices",
+              "datachannels",
+              "logs",
+              "pairs"
+            ],
+            "description": "Category the observation belongs to."
+          },
+          "source": {
+            "type": "object",
+            "description": "Identifies what the observation concerns. Which properties are present depends on the category (connections: pid; pairs: pid+cpid; streams: pid+sid+ssrcId; datachannels: pid+sid; devices: did+rid+timestamp+labelId; logs: pid). Routing/matching uses pid/sid/cpid/did+timestamp; ssrcId and labelId are display identifiers.",
+            "properties": {
+              "pid": {
+                "type": "string",
+                "description": "Peer-connection id."
+              },
+              "sid": {
+                "type": "string",
+                "description": "Stream or datachannel report id (the W3C stats report dictionary id)."
+              },
+              "cpid": {
+                "type": "string",
+                "description": "Candidate-pair id."
+              },
+              "did": {
+                "type": "string",
+                "description": "Device entry id."
+              },
+              "rid": {
+                "type": "string",
+                "description": "Device row index, as a string."
+              },
+              "timestamp": {
+                "type": "string",
+                "description": "Device entry time, an ISO-like date string."
+              },
+              "ssrcId": {
+                "type": "integer",
+                "format": "int64",
+                "description": "Stream SSRC (W3C RTCRtpStreamStats.ssrc, unsigned long)."
+              },
+              "labelId": {
+                "type": "string",
+                "description": "Device human name."
+              }
+            }
+          },
+          "label": {
+            "deprecated": true,
+            "description": "DEPRECATED, removed in the next schema version. Overloaded legacy identifier whose runtime type is polymorphic: a number (the numeric SSRC) for stream observations, a string (the datachannel report id) for datachannels, a string (the device name) for device observations. No fixed type is declared because the runtime type varies by category. Read source.ssrcId / source.sid / source.labelId instead."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Tags attached to the observation (e.g. network, audio, video, connectivity, security)."
+          },
+          "url": {
+            "type": "string",
+            "description": "Related URL when applicable (e.g. the TURN server URL)."
+          },
+          "firstSeenAt": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Epoch timestamp (ms) of the first occurrence of the observation, truncated to a whole millisecond."
+          },
+          "valueInCount": {
+            "type": "number",
+            "description": "Observation value as a count (e.g. number of duplicated lines or occurrences)."
+          },
+          "averageInMs": {
+            "type": "number",
+            "description": "Average value in milliseconds (e.g. jitter, rtt, encode/decode time)."
+          },
+          "maxInMs": {
+            "type": "number",
+            "description": "Maximum value in milliseconds."
+          },
+          "valueInPercent": {
+            "type": "number",
+            "description": "Observation value as a percentage (e.g. audio/video loss, frames dropped)."
+          },
+          "durationInPercent": {
+            "type": "number",
+            "description": "Duration of the observation as a percentage of the call."
+          },
+          "durationInMs": {
+            "type": "number",
+            "description": "Duration in milliseconds (e.g. TURN/STUN delay, signaling time)."
+          },
+          "durationInSeconds": {
+            "type": "number",
+            "description": "Duration in seconds."
+          },
+          "indicators": {
+            "type": "object",
+            "description": "Supporting indicators (e.g. min, max, average, stddev)."
+          },
+          "meaning": {
+            "type": "string",
+            "description": "Human-readable meaning of the observation (used by the AI summary)."
+          },
+          "property": {
+            "type": "string",
+            "description": "The specific property the observation refers to (e.g. audioLevel)."
+          }
+        }
+      }
+    },
+    "features": {
+      "type": "object",
+      "description": "Boolean and value flags about devices, network and capabilities used during the session."
+    },
+    "observationsCount": {
+      "type": "object",
+      "description": "Counts of observations grouped by severity (critical, high, medium, low, info)."
+    },
+    "aiSummary": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "AI-generated session summary. Always `null` on `POST /analyze` responses and while background generation is pending or plan-gated. Stable `summary` fields: `highlight`, `network`, `media`, `user` (markdown strings) and `networkScore`, `mediaScore`, `userScore` (one of excellent, good, acceptable, poor, bad, mediocre). Other fields may appear and are subject to change without notice. Use them with care.",
+      "properties": {
+        "model": {
+          "type": "string",
+          "description": "Model id used for generation (e.g. anthropic/claude-haiku-4.5)."
+        },
+        "summary": {
+          "type": "object",
+          "description": "AI-authored summary. Extra undocumented fields may appear and are subject to change.",
+          "additionalProperties": true,
+          "properties": {
+            "highlight": {
+              "type": "string",
+              "description": "One-line overall summary (markdown)."
+            },
+            "network": {
+              "type": "string",
+              "description": "Network and connectivity analysis (markdown)."
+            },
+            "networkScore": {
+              "type": "string",
+              "description": "Qualitative network rating: excellent, good, acceptable, poor, bad or mediocre."
+            },
+            "media": {
+              "type": "string",
+              "description": "Audio/video quality analysis (markdown)."
+            },
+            "mediaScore": {
+              "type": "string",
+              "description": "Qualitative media rating (same values as networkScore)."
+            },
+            "user": {
+              "type": "string",
+              "description": "Device and local-user analysis (markdown)."
+            },
+            "userScore": {
+              "type": "string",
+              "description": "Qualitative user-side rating (same values as networkScore)."
+            }
+          }
+        },
+        "version": {
+          "type": "string",
+          "description": "AI prompt configuration version used for generation."
+        }
+      }
+    }
+  }
+}

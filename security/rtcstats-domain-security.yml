@@ -1,11 +1,17 @@
-generated: '2026-08-09'
+generated: '2026-09-28'
 method: probed
 source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
 hosts:
+- host: www.rtcstats.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Dec  6 14:53:03 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
 - host: rtcstats.com
   https: true
   tls_version: TLSv1.3
-  cert_expires: Oct  8 22:14:34 2026 GMT
+  cert_expires: Dec 11 04:48:28 2026 GMT
   hsts: true
   hsts_max_age: 31536000
 - host: api.rtcstats.com
@@ -20,4 +26,4 @@ domains:
   caa: []
   spf: true
   dmarc: true
-  dmarc_policy: quarantine
+  dmarc_policy: reject

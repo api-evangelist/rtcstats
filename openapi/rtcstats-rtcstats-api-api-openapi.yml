@@ -769,6 +769,23 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    EnrichResponse:
+      type: object
+      description: 'POST /v1.0/enrich response: the scores and observations projection, plus the processor version and a generation timestamp.'
+      required:
+      - data
+      - processorVersion
+      - generatedAt
+      properties:
+        data:
+          $ref: '#/components/schemas/EnrichData'
+        processorVersion:
+          type: string
+          description: Version of the @rtcstats/rtcstats-processor package that produced the analysis (semver, e.g. 1.9.0).
+        generatedAt:
+          type: integer
+          format: int64
+          description: Unix epoch time in milliseconds when the response was generated.
     EnrichData:
       type: object
       description: Scores, per-severity observation counts, trimmed observations, and user-agent data. No stored-session fields.
@@ -791,6 +808,339 @@ components:
           type: object
           additionalProperties: true
           description: Browser, platform, hardware and screen information. Empty object when the dump carries none.
+    ObservationsCount:
+      type: object
+      description: Observation counts grouped by severity. The five values sum to the length of the observations array.
+      required:
+      - critical
+      - high
+      - medium
+      - low
+      - info
+      properties:
+        critical:
+          type: integer
+        high:
+          type: integer
+        medium:
+          type: integer
+        low:
+          type: integer
+        info:
+          type: integer
+    Scores:
+      type: object
+      description: The five scores produced by the analyzer. Each is a number or null.
+      required:
+      - experienceScore
+      - audioScore
+      - videoScore
+      - connectivityScore
+      - observationsScore
+      properties:
+        experienceScore:
+          type:
+          - number
+          - 'null'
+          format: float
+          description: Overall experience score (0-100). Null when there is no media data to score against.
+        audioScore:
+          type:
+          - number
+          - 'null'
+          format: float
+          description: Audio quality score (1-5). Null when no audio stream is present.
+        videoScore:
+          type:
+          - number
+          - 'null'
+          format: float
+          description: Video quality score (1-5). Null when no video stream is present.
+        connectivityScore:
+          type:
+          - number
+          - 'null'
+          format: float
+          description: Connectivity score (1-5). Null when no peer connection produced a connectivity score.
+        observationsScore:
+          type:
+          - number
+          - 'null'
+          description: Aggregated severity score derived from observations. Null when unavailable.
+    SessionListItem:
+      type: object
+      required:
+      - rtcstatsId
+      - createdAt
+      - sessionStart
+      - sessionEnd
+      - title
+      - rtcstatsUrl
+      - abstract
+      properties:
+        rtcstatsId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+          description: When the session row was created.
+        sessionStart:
+          type:
+          - string
+          - 'null'
+          description: Call start from summary when available.
+        sessionEnd:
+          type:
+          - string
+          - 'null'
+          description: Call end from summary when available.
+        title:
+          type: string
+        rtcstatsUrl:
+          type: string
+          description: Dashboard URL to open the rtcstats session.
+        embedUrl:
+          type: string
+          description: URL to open the session in the embedded viewer. Only present on the Enterprise plan.
+        abstract:
+          allOf:
+          - $ref: '#/components/schemas/SessionAbstract'
+          description: Denormalized session summary used to drive the list filters. <code>null</code> for rows that have not been indexed yet.
+    SessionsListResponse:
+      type: object
+      required:
+      - total
+      - data
+      properties:
+        total:
+          type: integer
+          minimum: 0
+          description: Number of sessions in <code>data</code>.
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SessionListItem'
+    ObservationTypesResponse:
+      type: object
+      required:
+      - total
+      - data
+      properties:
+        total:
+          type: integer
+          description: Number of observation types in the catalog.
+        data:
+          type: array
+          description: Catalog of observation types, sorted by `type`.
+          items:
+            type: object
+            required:
+            - type
+            - title
+            - severity
+            - tags
+            properties:
+              type:
+                type: string
+                description: Unique identifier type of the observation, e.g. 'cpuPressure'.
+              title:
+                type: string
+                description: Human-readable title.
+              severity:
+                type: array
+                items:
+                  type: string
+                  enum:
+                  - critical
+                  - high
+                  - medium
+                  - low
+                  - info
+                description: All severities this observation type can emit.
+              tags:
+                type: array
+                items:
+                  type: string
+                  enum:
+                  - connectivity
+                  - security
+                  - audio
+                  - video
+                  - datachannel
+                  - outbound
+                  - inbound
+                  - peripheral
+                  - behavior
+                  - network
+                  - configuration
+                  - cpu
+                  - bug
+                description: All tags this observation type can carry.
+      example:
+        total: 2
+        data:
+        - type: cpuPressure
+          title: CPU pressure
+          severity:
+          - high
+          - medium
+          tags:
+          - cpu
+          - connectivity
+        - type: speakerDelay
+          title: Delay in playing audio
+          severity:
+          - medium
+          tags:
+          - audio
+          - inbound
+          - peripheral
+    McpStreamableHttpTransportError:
+      type: object
+      description: JSON-RPC 2.0 envelope returned by the MCP Streamable HTTP transport for **HTTP-level** failures (before or outside the SSE stream). This is not the same shape as tool errors from `tools/call`, which are delivered with HTTP 200 inside the stream as JSON-RPC responses.
+      required:
+      - jsonrpc
+      - error
+      - id
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+          - '2.0'
+        error:
+          type: object
+          required:
+          - code
+          - message
+          properties:
+            code:
+              type: integer
+              description: 'JSON-RPC error code. Common values: **-32700** (parse error / invalid message), **-32600** (invalid request, e.g. init rules), **-32000** (bad request: protocol version, missing session header, server not initialized), **-32001** (session not found).'
+            message:
+              type: string
+            data:
+              description: Optional extra detail (e.g. parse failure).
+        id:
+          description: Always `null` for transport-level errors.
+    SessionAbstract:
+      type: object
+      description: Denormalized session summary returned alongside each session in the list so clients can render badges or compute their own filters without a second call. <code>observationTypes</code> matches the <code>observationTypes</code> filter input. Every property is always present.
+      required:
+      - observationTypes
+      - observationTags
+      - browser
+      - browserVersion
+      - os
+      - osVersion
+      - conferenceId
+      - sessionId
+      - userId
+      - experienceScore
+      - connectivity
+      - observationsCritical
+      - observationsHigh
+      - observationsMedium
+      - scoreBand
+      properties:
+        observationTypes:
+          type: array
+          items:
+            type: string
+          description: Unique observation type names with severity critical/high/medium.
+        observationTags:
+          type: array
+          items:
+            type: string
+          description: Unique tags carried by critical/high/medium observations only.
+        browser:
+          type:
+          - string
+          - 'null'
+        browserVersion:
+          type:
+          - string
+          - 'null'
+          description: Major browser version only (e.g. <code>142</code>).
+        os:
+          type:
+          - string
+          - 'null'
+        osVersion:
+          type:
+          - string
+          - 'null'
+        conferenceId:
+          type:
+          - string
+          - 'null'
+        sessionId:
+          type:
+          - string
+          - 'null'
+        userId:
+          type:
+          - string
+          - 'null'
+        experienceScore:
+          type:
+          - number
+          - 'null'
+        connectivity:
+          type:
+          - string
+          - 'null'
+        observationsCritical:
+          type: integer
+          minimum: 0
+        observationsHigh:
+          type: integer
+          minimum: 0
+        observationsMedium:
+          type: integer
+          minimum: 0
+        scoreBand:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+          - unrated
+          description: 'Experience-score band: <code>high</code> (>= 80), <code>medium</code> (60..79), <code>low</code> (< 60), or <code>unrated</code> when there is no score.'
+    QuotaResponse:
+      type: object
+      required:
+      - accountName
+      - accountPlan
+      - allowedCredits
+      - remainingCredits
+      properties:
+        accountName:
+          type: string
+          description: Account display name.
+        accountPlan:
+          type: string
+          enum:
+          - developer
+          - trial_developer
+          - enterprise
+          description: Effective plan for the account.
+        allowedCredits:
+          type: number
+          description: Total credits allowed for the account (monthly allocation plus purchased)
+        remainingCredits:
+          type: number
+          description: Credits available.
+    Error:
+      type: object
+      required:
+      - error
+      - errorCode
+      properties:
+        error:
+          type: string
+        errorCode:
+          type: string
     AnalyzeResponseData:
       type: object
       description: Session payload peer-connections, observations and scores.
@@ -1082,194 +1432,6 @@ components:
             version:
               type: string
               description: AI prompt configuration version used for generation.
-    SessionsListResponse:
-      type: object
-      required:
-      - total
-      - data
-      properties:
-        total:
-          type: integer
-          minimum: 0
-          description: Number of sessions in <code>data</code>.
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/SessionListItem'
-    QuotaResponse:
-      type: object
-      required:
-      - accountName
-      - accountPlan
-      - allowedCredits
-      - remainingCredits
-      properties:
-        accountName:
-          type: string
-          description: Account display name.
-        accountPlan:
-          type: string
-          enum:
-          - developer
-          - trial_developer
-          - enterprise
-          description: Effective plan for the account.
-        allowedCredits:
-          type: number
-          description: Total credits allowed for the account (monthly allocation plus purchased)
-        remainingCredits:
-          type: number
-          description: Credits available.
-    McpStreamableHttpTransportError:
-      type: object
-      description: JSON-RPC 2.0 envelope returned by the MCP Streamable HTTP transport for **HTTP-level** failures (before or outside the SSE stream). This is not the same shape as tool errors from `tools/call`, which are delivered with HTTP 200 inside the stream as JSON-RPC responses.
-      required:
-      - jsonrpc
-      - error
-      - id
-      properties:
-        jsonrpc:
-          type: string
-          enum:
-          - '2.0'
-        error:
-          type: object
-          required:
-          - code
-          - message
-          properties:
-            code:
-              type: integer
-              description: 'JSON-RPC error code. Common values: **-32700** (parse error / invalid message), **-32600** (invalid request, e.g. init rules), **-32000** (bad request: protocol version, missing session header, server not initialized), **-32001** (session not found).'
-            message:
-              type: string
-            data:
-              description: Optional extra detail (e.g. parse failure).
-        id:
-          description: Always `null` for transport-level errors.
-    SessionAbstract:
-      type: object
-      description: Denormalized session summary returned alongside each session in the list so clients can render badges or compute their own filters without a second call. <code>observationTypes</code> matches the <code>observationTypes</code> filter input. Every property is always present.
-      required:
-      - observationTypes
-      - observationTags
-      - browser
-      - browserVersion
-      - os
-      - osVersion
-      - conferenceId
-      - sessionId
-      - userId
-      - experienceScore
-      - connectivity
-      - observationsCritical
-      - observationsHigh
-      - observationsMedium
-      - scoreBand
-      properties:
-        observationTypes:
-          type: array
-          items:
-            type: string
-          description: Unique observation type names with severity critical/high/medium.
-        observationTags:
-          type: array
-          items:
-            type: string
-          description: Unique tags carried by critical/high/medium observations only.
-        browser:
-          type:
-          - string
-          - 'null'
-        browserVersion:
-          type:
-          - string
-          - 'null'
-          description: Major browser version only (e.g. <code>142</code>).
-        os:
-          type:
-          - string
-          - 'null'
-        osVersion:
-          type:
-          - string
-          - 'null'
-        conferenceId:
-          type:
-          - string
-          - 'null'
-        sessionId:
-          type:
-          - string
-          - 'null'
-        userId:
-          type:
-          - string
-          - 'null'
-        experienceScore:
-          type:
-          - number
-          - 'null'
-        connectivity:
-          type:
-          - string
-          - 'null'
-        observationsCritical:
-          type: integer
-          minimum: 0
-        observationsHigh:
-          type: integer
-          minimum: 0
-        observationsMedium:
-          type: integer
-          minimum: 0
-        scoreBand:
-          type: string
-          enum:
-          - low
-          - medium
-          - high
-          - unrated
-          description: 'Experience-score band: <code>high</code> (>= 80), <code>medium</code> (60..79), <code>low</code> (< 60), or <code>unrated</code> when there is no score.'
-    Scores:
-      type: object
-      description: The five scores produced by the analyzer. Each is a number or null.
-      required:
-      - experienceScore
-      - audioScore
-      - videoScore
-      - connectivityScore
-      - observationsScore
-      properties:
-        experienceScore:
-          type:
-          - number
-          - 'null'
-          format: float
-          description: Overall experience score (0-100). Null when there is no media data to score against.
-        audioScore:
-          type:
-          - number
-          - 'null'
-          format: float
-          description: Audio quality score (1-5). Null when no audio stream is present.
-        videoScore:
-          type:
-          - number
-          - 'null'
-          format: float
-          description: Video quality score (1-5). Null when no video stream is present.
-        connectivityScore:
-          type:
-          - number
-          - 'null'
-          format: float
-          description: Connectivity score (1-5). Null when no peer connection produced a connectivity score.
-        observationsScore:
-          type:
-          - number
-          - 'null'
-          description: Aggregated severity score derived from observations. Null when unavailable.
     Observation:
       type: object
       description: 'A single trimmed observation: flat and SQL-friendly. Only type and severity are always present; every other field is included only when it has a finite value, never as null.'
@@ -1335,168 +1497,6 @@ components:
         durationInPercent:
           type: number
           description: Duration of the observation as a percentage of the call.
-    Error:
-      type: object
-      required:
-      - error
-      - errorCode
-      properties:
-        error:
-          type: string
-        errorCode:
-          type: string
-    SessionListItem:
-      type: object
-      required:
-      - rtcstatsId
-      - createdAt
-      - sessionStart
-      - sessionEnd
-      - title
-      - rtcstatsUrl
-      - abstract
-      properties:
-        rtcstatsId:
-          type: string
-          format: uuid
-        createdAt:
-          type: string
-          format: date-time
-          description: When the session row was created.
-        sessionStart:
-          type:
-          - string
-          - 'null'
-          description: Call start from summary when available.
-        sessionEnd:
-          type:
-          - string
-          - 'null'
-          description: Call end from summary when available.
-        title:
-          type: string
-        rtcstatsUrl:
-          type: string
-          description: Dashboard URL to open the rtcstats session.
-        embedUrl:
-          type: string
-          description: URL to open the session in the embedded viewer. Only present on the Enterprise plan.
-        abstract:
-          allOf:
-          - $ref: '#/components/schemas/SessionAbstract'
-          description: Denormalized session summary used to drive the list filters. <code>null</code> for rows that have not been indexed yet.
-    ObservationsCount:
-      type: object
-      description: Observation counts grouped by severity. The five values sum to the length of the observations array.
-      required:
-      - critical
-      - high
-      - medium
-      - low
-      - info
-      properties:
-        critical:
-          type: integer
-        high:
-          type: integer
-        medium:
-          type: integer
-        low:
-          type: integer
-        info:
-          type: integer
-    ObservationTypesResponse:
-      type: object
-      required:
-      - total
-      - data
-      properties:
-        total:
-          type: integer
-          description: Number of observation types in the catalog.
-        data:
-          type: array
-          description: Catalog of observation types, sorted by `type`.
-          items:
-            type: object
-            required:
-            - type
-            - title
-            - severity
-            - tags
-            properties:
-              type:
-                type: string
-                description: Unique identifier type of the observation, e.g. 'cpuPressure'.
-              title:
-                type: string
-                description: Human-readable title.
-              severity:
-                type: array
-                items:
-                  type: string
-                  enum:
-                  - critical
-                  - high
-                  - medium
-                  - low
-                  - info
-                description: All severities this observation type can emit.
-              tags:
-                type: array
-                items:
-                  type: string
-                  enum:
-                  - connectivity
-                  - security
-                  - audio
-                  - video
-                  - datachannel
-                  - outbound
-                  - inbound
-                  - peripheral
-                  - behavior
-                  - network
-                  - configuration
-                  - cpu
-                  - bug
-                description: All tags this observation type can carry.
-      example:
-        total: 2
-        data:
-        - type: cpuPressure
-          title: CPU pressure
-          severity:
-          - high
-          - medium
-          tags:
-          - cpu
-          - connectivity
-        - type: speakerDelay
-          title: Delay in playing audio
-          severity:
-          - medium
-          tags:
-          - audio
-          - inbound
-          - peripheral
-    EnrichResponse:
-      type: object
-      description: 'POST /v1.0/enrich response: the scores and observations projection, plus the processor version and a generation timestamp.'
-      required:
-      - data
-      - processorVersion
-      - generatedAt
-      properties:
-        data:
-          $ref: '#/components/schemas/EnrichData'
-        processorVersion:
-          type: string
-          description: Version of the @rtcstats/rtcstats-processor package that produced the analysis (semver, e.g. 1.9.0).
-        generatedAt:
-          type: integer
-          format: int64
-          description: Unix epoch time in milliseconds when the response was generated.
   securitySchemes:
     BearerAuth:
       type: http

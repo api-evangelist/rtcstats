@@ -22,6 +22,7 @@ authentication:
 idempotency:
   supported: false
   header: null
+  coverage: none
   detail: >-
     rtcStats documents no idempotency key. The chunked upload flow does carry a
     client-generated `fileId` shared by every chunk and the assemble request,

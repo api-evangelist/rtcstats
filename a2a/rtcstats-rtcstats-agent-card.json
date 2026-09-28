@@ -1,0 +1,88 @@
+{
+  "protocolVersion": "0.3.0",
+  "name": "rtcStats",
+  "description": "WebRTC observability. Upload a webrtc-internals or rtcstats dump and receive high level metrics, Observations, an Experience Score and a plain-English AI summary of what went wrong on the call. Analyzed sessions can then be listed, filtered and read back over MCP or REST.",
+  "url": "https://api.rtcstats.com/v1.0/mcp",
+  "preferredTransport": "JSONRPC",
+  "version": "2.0.0",
+  "provider": {
+    "organization": "rtcStats",
+    "url": "https://rtcstats.com"
+  },
+  "iconUrl": "https://rtcstats.com/logo.png",
+  "documentationUrl": "https://rtcstats.com/integrations/mcp",
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": false,
+    "stateTransitionHistory": false
+  },
+  "defaultInputModes": ["application/json", "text/plain"],
+  "defaultOutputModes": ["application/json", "text/plain"],
+  "securitySchemes": {
+    "BearerAuth": {
+      "type": "http",
+      "scheme": "bearer",
+      "bearerFormat": "JWT",
+      "description": "Application token issued from the rtcStats dashboard. Send as Authorization: Bearer <token>. Requires the Developer plan or above."
+    }
+  },
+  "security": [{ "BearerAuth": [] }],
+  "skills": [
+    {
+      "id": "get_quota",
+      "name": "Check credit quota",
+      "description": "Return the account's monthly credit allowance, credits consumed and credits remaining. Call this before a batch of analyses so the agent does not run the account dry mid-run.",
+      "tags": ["quota", "credits", "billing", "webrtc"],
+      "examples": [
+        "How many rtcStats credits do I have left this month?",
+        "Do I have enough quota to analyze 40 dumps?"
+      ],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
+    },
+    {
+      "id": "list_sessions",
+      "name": "List and filter analyzed sessions",
+      "description": "List previously analyzed WebRTC sessions. Filterable by name, observation type, observation tag, OS, browser, browser version, user id, conference id, session id, and by severity or score bands (hasCritical, hasHigh, hasMedium, hasLowScore, hasMediumScore, hasHighScore). This is the triage entry point: narrow to the bad calls, then read them.",
+      "tags": ["webrtc", "sessions", "triage", "observability", "monitoring"],
+      "examples": [
+        "Show me every session last week with a critical observation on Chrome",
+        "Which sessions for conference abc123 scored badly?",
+        "List sessions tagged connectivity with a low experience score"
+      ],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
+    },
+    {
+      "id": "get_session",
+      "name": "Read a full analyzed session",
+      "description": "Return the full analysis for one session by rtcstatsId: Experience Score, audio, video and connectivity scores, connectivity type, observation counts by severity, the observations themselves with type, severity, category, tags and source peer connection, plus call start, end and duration.",
+      "tags": ["webrtc", "debugging", "root-cause", "observations", "experience-score"],
+      "examples": [
+        "Why did session 8f2c... sound bad?",
+        "Read the observations for this session and tell me what to fix"
+      ],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
+    },
+    {
+      "id": "get_observation_explanation",
+      "name": "Explain an observation type",
+      "description": "Return the explanation of one observation type, passed exactly as it appears in a session's observations: title, description, severities, tags, related types and the explanation as Markdown sections.",
+      "tags": ["webrtc", "observations", "explanation"],
+      "examples": [
+        "What does the speakerDelay observation mean and what should I check?"
+      ],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
+    }
+  ],
+  "supportsAuthenticatedExtendedCard": false,
+  "additionalInterfaces": [
+    {
+      "url": "https://api.rtcstats.com/v1.0",
+      "transport": "HTTP+JSON",
+      "description": "REST API covering the same surface plus dump upload, analysis, enrichment and session deletion. Described at https://rtcstats.com/api/openapi"
+    }
+  ]
+}

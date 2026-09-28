@@ -1,0 +1,78 @@
+generated: '2026-09-28'
+method: derived
+generator: derive-vocabulary.py
+source: openapi/rtcstats-rtcstats-api-api-openapi.yml
+vocabulary:
+  name: rtcStats Domain Vocabulary
+  description: 'Terms declared by rtcStats''s own API contract: its resource groups, objects and enumerations, with the contract''s definitions.
+    Derived, not authored.'
+  version: '2026-09-28'
+  terms:
+  - term: EnrichData
+    definition: Scores, per-severity observation counts, trimmed observations, and user-agent data. No stored-session fields.
+    tags:
+    - Object
+    source: openapi/rtcstats-rtcstats-api-api-openapi.yml#/components/schemas/EnrichData
+  - term: AnalyzeResponseData
+    definition: Session payload peer-connections, observations and scores.
+    tags:
+    - Object
+    source: openapi/rtcstats-rtcstats-api-api-openapi.yml#/components/schemas/AnalyzeResponseData
+  - term: SessionsListResponse
+    definition: 'Object declared by the contract with fields: total, data.'
+    tags:
+    - Object
+    source: openapi/rtcstats-rtcstats-api-api-openapi.yml#/components/schemas/SessionsListResponse
+  - term: QuotaResponse
+    definition: 'Object declared by the contract with fields: accountName, accountPlan, allowedCredits, remainingCredits.'
+    tags:
+    - Object
+    source: openapi/rtcstats-rtcstats-api-api-openapi.yml#/components/schemas/QuotaResponse
+  - term: McpStreamableHttpTransportError
+    definition: JSON-RPC 2.0 envelope returned by the MCP Streamable HTTP transport for **HTTP-level** failures (before or outside the SSE stream).
+      This is not the same shape as tool errors from `tools/call`, which are delivered with HTTP 200 inside the stream as JSON-RPC responses.
+    tags:
+    - Object
+    source: openapi/rtcstats-rtcstats-api-api-openapi.yml#/components/schemas/McpStreamableHttpTransportError
+  - term: SessionAbstract
+    definition: Denormalized session summary returned alongside each session in the list so clients can render badges or compute their own filters
+      without a second call. observationTypes matches the observationTypes filter input. Every property is always present.
+    tags:
+    - Object
+    source: openapi/rtcstats-rtcstats-api-api-openapi.yml#/components/schemas/SessionAbstract
+  - term: Scores
+    definition: The five scores produced by the analyzer. Each is a number or null.
+    tags:
+    - Object
+    source: openapi/rtcstats-rtcstats-api-api-openapi.yml#/components/schemas/Scores
+  - term: Observation
+    definition: 'A single trimmed observation: flat and SQL-friendly. Only type and severity are always present; every other field is included
+      only when it has a finite value, never as null.'
+    tags:
+    - Object
+    source: openapi/rtcstats-rtcstats-api-api-openapi.yml#/components/schemas/Observation
+  - term: Error
+    definition: 'Object declared by the contract with fields: error, errorCode.'
+    tags:
+    - Object
+    source: openapi/rtcstats-rtcstats-api-api-openapi.yml#/components/schemas/Error
+  - term: SessionListItem
+    definition: 'Object declared by the contract with fields: rtcstatsId, createdAt, sessionStart, sessionEnd, title, rtcstatsUrl, embedUrl, abstract.'
+    tags:
+    - Object
+    source: openapi/rtcstats-rtcstats-api-api-openapi.yml#/components/schemas/SessionListItem
+  - term: ObservationsCount
+    definition: Observation counts grouped by severity. The five values sum to the length of the observations array.
+    tags:
+    - Object
+    source: openapi/rtcstats-rtcstats-api-api-openapi.yml#/components/schemas/ObservationsCount
+  - term: ObservationTypesResponse
+    definition: 'Object declared by the contract with fields: total, data.'
+    tags:
+    - Object
+    source: openapi/rtcstats-rtcstats-api-api-openapi.yml#/components/schemas/ObservationTypesResponse
+  - term: EnrichResponse
+    definition: 'POST /v1.0/enrich response: the scores and observations projection, plus the processor version and a generation timestamp.'
+    tags:
+    - Object
+    source: openapi/rtcstats-rtcstats-api-api-openapi.yml#/components/schemas/EnrichResponse

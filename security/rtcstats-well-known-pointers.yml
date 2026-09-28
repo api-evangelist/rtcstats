@@ -1,0 +1,12 @@
+generated: '2026-09-28'
+method: probed
+source: live GET probes of /.well-known/* on both hosts
+pointers:
+  - host: https://rtcstats.com
+    security_txt: https://rtcstats.com/.well-known/security.txt
+    api_catalog: https://rtcstats.com/.well-known/api-catalog
+    agent_card: https://rtcstats.com/.well-known/agent-card.json
+  - host: https://api.rtcstats.com
+    security_txt: https://api.rtcstats.com/.well-known/security.txt
+    api_catalog: https://api.rtcstats.com/.well-known/api-catalog
+    agent_card: https://api.rtcstats.com/.well-known/agent-card.json

@@ -1,0 +1,227 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/rtcstats/main/json-schema/rtcstats-enrich-response-schema.json",
+  "title": "EnrichResponse",
+  "description": "POST /v1.0/enrich response: the scores and observations projection, plus the processor version and a generation timestamp.",
+  "x-generated": "2026-09-28",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/rtcstats-rtcstats-api-api-openapi.yml#/components/schemas/EnrichResponse",
+  "type": "object",
+  "required": [
+    "data",
+    "processorVersion",
+    "generatedAt"
+  ],
+  "properties": {
+    "data": {
+      "$ref": "#/$defs/EnrichData"
+    },
+    "processorVersion": {
+      "type": "string",
+      "description": "Version of the @rtcstats/rtcstats-processor package that produced the analysis (semver, e.g. 1.9.0)."
+    },
+    "generatedAt": {
+      "type": "integer",
+      "format": "int64",
+      "description": "Unix epoch time in milliseconds when the response was generated."
+    }
+  },
+  "$defs": {
+    "EnrichData": {
+      "type": "object",
+      "description": "Scores, per-severity observation counts, trimmed observations, and user-agent data. No stored-session fields.",
+      "required": [
+        "scores",
+        "observationsCount",
+        "observations",
+        "userAgentData"
+      ],
+      "properties": {
+        "scores": {
+          "$ref": "#/$defs/Scores"
+        },
+        "observationsCount": {
+          "$ref": "#/$defs/ObservationsCount"
+        },
+        "observations": {
+          "type": "array",
+          "description": "Flat, SQL-friendly observation records. Absent or non-finite values are omitted, never null.",
+          "items": {
+            "$ref": "#/$defs/Observation"
+          }
+        },
+        "userAgentData": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Browser, platform, hardware and screen information. Empty object when the dump carries none."
+        }
+      }
+    },
+    "Observation": {
+      "type": "object",
+      "description": "A single trimmed observation: flat and SQL-friendly. Only type and severity are always present; every other field is included only when it has a finite value, never as null.",
+      "required": [
+        "type",
+        "severity"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Observation type key, e.g. 'turnNoConfig'. The full catalog is available from GET /v1.0/observations."
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "critical",
+            "high",
+            "medium",
+            "low",
+            "info"
+          ],
+          "description": "Severity of the observation."
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "connections",
+            "streams",
+            "devices",
+            "datachannels",
+            "logs",
+            "pairs"
+          ],
+          "description": "Category the observation belongs to."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags attached to the observation (e.g. network, audio, video, connectivity, security)."
+        },
+        "firstSeenAt": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Epoch timestamp (ms) of the first occurrence, truncated to a whole millisecond. Omitted when unknown or non-finite."
+        },
+        "url": {
+          "type": "string",
+          "description": "Related URL when applicable (e.g. the TURN server URL)."
+        },
+        "property": {
+          "type": "string",
+          "description": "The specific property the observation refers to (e.g. audioLevel)."
+        },
+        "valueInCount": {
+          "type": "number",
+          "description": "Observation value as a count (e.g. number of duplicated lines or occurrences)."
+        },
+        "valueInPercent": {
+          "type": "number",
+          "description": "Observation value as a percentage (e.g. audio/video loss, frames dropped)."
+        },
+        "averageInMs": {
+          "type": "number",
+          "description": "Average value in milliseconds (e.g. jitter, rtt, encode/decode time)."
+        },
+        "maxInMs": {
+          "type": "number",
+          "description": "Maximum value in milliseconds."
+        },
+        "durationInMs": {
+          "type": "number",
+          "description": "Duration in milliseconds (e.g. TURN/STUN delay, signaling time)."
+        },
+        "durationInSeconds": {
+          "type": "number",
+          "description": "Duration in seconds."
+        },
+        "durationInPercent": {
+          "type": "number",
+          "description": "Duration of the observation as a percentage of the call."
+        }
+      }
+    },
+    "ObservationsCount": {
+      "type": "object",
+      "description": "Observation counts grouped by severity. The five values sum to the length of the observations array.",
+      "required": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "info"
+      ],
+      "properties": {
+        "critical": {
+          "type": "integer"
+        },
+        "high": {
+          "type": "integer"
+        },
+        "medium": {
+          "type": "integer"
+        },
+        "low": {
+          "type": "integer"
+        },
+        "info": {
+          "type": "integer"
+        }
+      }
+    },
+    "Scores": {
+      "type": "object",
+      "description": "The five scores produced by the analyzer. Each is a number or null.",
+      "required": [
+        "experienceScore",
+        "audioScore",
+        "videoScore",
+        "connectivityScore",
+        "observationsScore"
+      ],
+      "properties": {
+        "experienceScore": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "float",
+          "description": "Overall experience score (0-100). Null when there is no media data to score against."
+        },
+        "audioScore": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "float",
+          "description": "Audio quality score (1-5). Null when no audio stream is present."
+        },
+        "videoScore": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "float",
+          "description": "Video quality score (1-5). Null when no video stream is present."
+        },
+        "connectivityScore": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "float",
+          "description": "Connectivity score (1-5). Null when no peer connection produced a connectivity score."
+        },
+        "observationsScore": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Aggregated severity score derived from observations. Null when unavailable."
+        }
+      }
+    }
+  }
+}

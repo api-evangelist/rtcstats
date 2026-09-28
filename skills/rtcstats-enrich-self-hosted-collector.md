@@ -1,5 +1,5 @@
 ---
-name: Enrich sessions from a self-hosted rtcstats collector
+name: rtcstats-enrich-self-hosted-collector
 description: Use POST /v1.0/enrich to get scores and a flat, SQL-friendly observation list for a dump your own rtcstats-server already holds — without storing the session on rtcstats.com.
 api: openapi/rtcstats-api-openapi.yml
 operations: [enrich, quota, observations]

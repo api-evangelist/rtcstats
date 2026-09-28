@@ -6,6 +6,10 @@ description: 'rtcStats publishes NO API sandbox: there is no test mode, no test-
   call runs against production with a live application JWT and consumes real credits. What does exist
   is a no-account way to see the product output and a free tier to exercise it — recorded here so a
   later round does not re-search, and so the absence is on the record.'
+docs:
+  - https://rtcstats.com/api-docs
+  - https://rtcstats.com/api-docs.md
+  - https://rtcstats.com/llms.txt
 api_sandbox:
   test_mode: false
   test_keys: false

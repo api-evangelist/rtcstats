@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/rtcstats/main/json-schema/rtcstats-sessions-list-response-schema.json",
+  "title": "SessionsListResponse",
+  "x-generated": "2026-09-28",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/rtcstats-rtcstats-api-api-openapi.yml#/components/schemas/SessionsListResponse",
+  "type": "object",
+  "required": [
+    "total",
+    "data"
+  ],
+  "properties": {
+    "total": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of sessions in <code>data</code>."
+    },
+    "data": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/SessionListItem"
+      }
+    }
+  },
+  "$defs": {
+    "SessionAbstract": {
+      "type": "object",
+      "description": "Denormalized session summary returned alongside each session in the list so clients can render badges or compute their own filters without a second call. <code>observationTypes</code> matches the <code>observationTypes</code> filter input. Every property is always present.",
+      "required": [
+        "observationTypes",
+        "observationTags",
+        "browser",
+        "browserVersion",
+        "os",
+        "osVersion",
+        "conferenceId",
+        "sessionId",
+        "userId",
+        "experienceScore",
+        "connectivity",
+        "observationsCritical",
+        "observationsHigh",
+        "observationsMedium",
+        "scoreBand"
+      ],
+      "properties": {
+        "observationTypes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Unique observation type names with severity critical/high/medium."
+        },
+        "observationTags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Unique tags carried by critical/high/medium observations only."
+        },
+        "browser": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "browserVersion": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Major browser version only (e.g. <code>142</code>)."
+        },
+        "os": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "osVersion": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "conferenceId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sessionId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "userId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "experienceScore": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "connectivity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "observationsCritical": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "observationsHigh": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "observationsMedium": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scoreBand": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "unrated"
+          ],
+          "description": "Experience-score band: <code>high</code> (>= 80), <code>medium</code> (60..79), <code>low</code> (< 60), or <code>unrated</code> when there is no score."
+        }
+      }
+    },
+    "SessionListItem": {
+      "type": "object",
+      "required": [
+        "rtcstatsId",
+        "createdAt",
+        "sessionStart",
+        "sessionEnd",
+        "title",
+        "rtcstatsUrl",
+        "abstract"
+      ],
+      "properties": {
+        "rtcstatsId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the session row was created."
+        },
+        "sessionStart": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Call start from summary when available."
+        },
+        "sessionEnd": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Call end from summary when available."
+        },
+        "title": {
+          "type": "string"
+        },
+        "rtcstatsUrl": {
+          "type": "string",
+          "description": "Dashboard URL to open the rtcstats session."
+        },
+        "embedUrl": {
+          "type": "string",
+          "description": "URL to open the session in the embedded viewer. Only present on the Enterprise plan."
+        },
+        "abstract": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/SessionAbstract"
+            }
+          ],
+          "description": "Denormalized session summary used to drive the list filters. <code>null</code> for rows that have not been indexed yet."
+        }
+      }
+    }
+  }
+}

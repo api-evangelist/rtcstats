@@ -1,8 +1,11 @@
 name: rtcStats
-description: SaaS for developers to troubleshoot and monitor WebRTC applications. Users upload webrtc-internals/rtcstats
-  dumps or stream stats to receive metrics, Observations, Deductions, an Experience Score, and an AI root-cause
-  summary. Offers a REST API, a hosted MCP server, and an open-source collection SDK/collector.
+
+description: SaaS for developers to troubleshoot and monitor WebRTC applications. Users upload webrtc-internals/rtcstats dumps or stream stats
+  to receive metrics, Observations, Deductions, an Experience Score, and an AI root-cause summary. Offers a REST API, a hosted MCP server, and
+  an open-source collection SDK/collector.
+
 url: https://raw.githubusercontent.com/api-evangelist/rtcstats/refs/heads/main/apis.yml
+
 deliveryModel:
   model: open-core
   license: MIT
@@ -17,6 +20,7 @@ deliveryModel:
   - pricing
   generated: '2026-08-28'
   method: derived
+
 accessModel:
   pricing: freemium
   onboarding: self-serve
@@ -33,9 +37,13 @@ accessModel:
   - sandbox
   generated: '2026-09-03'
   method: derived
+
 created: '2026-08-09'
+
 modified: '2026-09-16'
+
 specificationVersion: '0.23'
+
 tags:
 - WebRTC
 - Observability
@@ -47,6 +55,7 @@ tags:
 - Artificial Intelligence
 - MCP
 - Developer Tools
+
 tags_raw:
 - webrtc
 - observability
@@ -58,51 +67,41 @@ tags_raw:
 - ai
 - mcp
 - developer-tools
-apis:
-- aid: rtcstats:rtcstats-rtcstats-api-api
-  name: rtcStats API
-  description: The rtcStats API API from rtcStats — 8 operation(s) for rtcstats api.
-  humanURL: https://rtcstats.com/api-docs
-  baseURL: https://api.rtcstats.com/v1.0
-  tags:
-  - rtcStats API
-  properties:
-  - type: OpenAPI
-    url: openapi/rtcstats-rtcstats-api-api-openapi.yml
-  - type: Documentation
-    url: https://rtcstats.com/api-docs
-  - type: Documentation
-    url: https://rtcstats.com/api-docs.md
-  - type: LLMsTxt
-    url: https://rtcstats.com/llms.txt
-  - type: APIReference
-    url: https://rtcstats.com/api-docs.md
-  - type: GettingStarted
-    url: https://rtcstats.com/kb/getting-started
-  - type: ToolCrosswalk
-    url: mcp/rtcstats-tool-crosswalk.yml
-  - type: LLMsTxt
-    url: llms/rtcstats-llms.txt
-  - type: Authentication
-    url: authentication/rtcstats-authentication.yml
-  - type: Conventions
-    url: conventions/rtcstats-conventions.yml
-  - type: ErrorCatalog
-    url: errors/rtcstats-problem-types.yml
-  - type: DataModel
-    url: data-model/rtcstats-data-model.yml
-  - type: RateLimits
-    url: rate-limits/rtcstats-rate-limits.yml
+
 maintainers:
 - FN: rtcStats
   url: https://rtcstats.com
   email: support@rtcstats.com
-generated:
-  by: apis.io/add
-  model: claude-opus-4-8
-  confidence: 92
-  at: '2026-08-09T14:08:11.996Z'
+
+image: https://rtcstats.com/opengraph-image.png
+
 common:
+- type: Plans
+  url: plans/rtcstats-plans-pricing.yml
+- type: Spectral
+  url: rules/rtcstats-rules.yml
+- type: JSONLD
+  url: json-ld/rtcstats-context.jsonld
+- type: Vocabulary
+  url: vocabulary/rtcstats-vocabulary.yml
+- type: Sandbox
+  url: sandbox/rtcstats-sandbox.yml
+- type: Compliance
+  url: https://rtcstats.com/trust
+- type: Security
+  url: https://rtcstats.com/trust
+- type: Deprecation
+  url: lifecycle/rtcstats-lifecycle.yml
+- type: AgentCard
+  url: a2a/rtcstats-a2a.yml
+- type: Hosts
+  url: hosts/rtcstats-hosts.yml
+- type: Vendors
+  url: vendors/rtcstats-vendors.yml
+- type: TrustCenter
+  url: security/rtcstats-trust-center.yml
+- type: VulnerabilityDisclosure
+  url: security/rtcstats-vulnerability-disclosure.yml
 - type: Website
   url: https://www.rtcstats.com/
 - type: IssueTracker
@@ -176,24 +175,76 @@ common:
   url: https://rtcstats.com/tos
 - type: PrivacyPolicy
   url: https://rtcstats.com/privacy
-image: https://rtcstats.com/opengraph-image.png
-x-enrichment:
-  date: '2026-08-09'
-  status: enriched
-  artifacts_added: 21
-  pass: local-v1
+
+apis:
+- aid: rtcstats:rtcstats-rtcstats-api-api
+  name: rtcStats API
+  description: The rtcStats API API from rtcStats — 8 operation(s) for rtcstats api.
+  humanURL: https://rtcstats.com/api-docs
+  baseURL: https://api.rtcstats.com/v1.0
+  tags:
+  - rtcStats API
+  properties:
+  - type: OpenAPI
+    url: openapi/rtcstats-rtcstats-api-api-openapi.yml
+  - type: Documentation
+    url: https://rtcstats.com/api-docs
+  - type: Documentation
+    url: https://rtcstats.com/api-docs.md
+  - type: LLMsTxt
+    url: https://rtcstats.com/llms.txt
+  - type: APIReference
+    url: https://rtcstats.com/api-docs.md
+  - type: GettingStarted
+    url: https://rtcstats.com/kb/getting-started
+  - type: ToolCrosswalk
+    url: mcp/rtcstats-tool-crosswalk.yml
+  - type: LLMsTxt
+    url: llms/rtcstats-llms.txt
+  - type: Authentication
+    url: authentication/rtcstats-authentication.yml
+  - type: Conventions
+    url: conventions/rtcstats-conventions.yml
+  - type: ErrorCatalog
+    url: errors/rtcstats-problem-types.yml
+  - type: DataModel
+    url: data-model/rtcstats-data-model.yml
+  - type: RateLimits
+    url: rate-limits/rtcstats-rate-limits.yml
+  - type: JSONSchema
+    url: json-schema/rtcstats-analyze-response-data-schema.json
+  - type: JSONSchema
+    url: json-schema/rtcstats-observation-types-response-schema.json
+  - type: JSONSchema
+    url: json-schema/rtcstats-enrich-response-schema.json
+  - type: JSONSchema
+    url: json-schema/rtcstats-quota-response-schema.json
+  - type: JSONSchema
+    url: json-schema/rtcstats-sessions-list-response-schema.json
+
+generated:
+  by: apis.io/add
+  model: claude-opus-4-8
+  confidence: 92
+  at: '2026-08-09T14:08:11.996Z'
+
 x-correction-request:
   requested: '2026-09-28'
   source:
   - https://github.com/api-evangelist/rtcstats/pull/3
-  request: 'Provider PR #3 (tsahilevi, 2026-09-26): its well-known re-probe is committed as well-known/rtcstats-well-known.yml
-    (all 16 rows re-verified 2026-09-28; agent card now has 4 skills). Add pointers: security.txt, api-catalog and
-    agent-card.json on both rtcstats.com and api.rtcstats.com. The provider also asked that the profile point at
-    their own https://rtcstats.com/apis.yml (200 application/yaml): hand-merge its facts, record it as the provider-hosted
-    index, never apply it. MCP answers 401 with bearer auth as expected.'
+  request: 'Provider PR #3 (tsahilevi, 2026-09-26): its well-known re-probe is committed as well-known/rtcstats-well-known.yml (all 16 rows re-verified
+    2026-09-28; agent card now has 4 skills). Add pointers: security.txt, api-catalog and agent-card.json on both rtcstats.com and api.rtcstats.com.
+    The provider also asked that the profile point at their own https://rtcstats.com/apis.yml (200 application/yaml): hand-merge its facts, record
+    it as the provider-hosted index, never apply it. MCP answers 401 with bearer auth as expected.'
   earlier:
     requested: '2026-09-27'
     source: https://github.com/api-evangelist/rtcstats/issues/2
-    request: 'Well-known probe is stale (generated 2026-08-09): since v1.10 security.txt and other /.well-known
-      paths return 200 on rtcstats.com and api.rtcstats.com. Re-run the well-known harvest on both hosts. Also asks
-      how provider-published artifacts should be submitted -- answer on the issue.'
+    request: 'Well-known probe is stale (generated 2026-08-09): since v1.10 security.txt and other /.well-known paths return 200 on rtcstats.com
+      and api.rtcstats.com. Re-run the well-known harvest on both hosts. Also asks how provider-published artifacts should be submitted -- answer
+      on the issue.'
+x-enrichment:
+  date: '2026-09-28'
+  status: enriched
+  artifacts_added: 20
+  pass: modular-v1
+  engine: identity=local,contract=local,surfaces=local,docs=local,regulatory=local

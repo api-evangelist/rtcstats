@@ -1,10 +1,7 @@
 generated: '2026-08-09'
 method: searched
 source: openapi/rtcstats-api-openapi.yml
-docs:
-  - https://rtcstats.com/api-docs
-  - https://rtcstats.com/integrations/mcp
-  - https://rtcstats.com/llms.txt
+docs: https://rtcstats.com/api-docs
 description: >-
   One authentication mechanism across the whole surface: a static application
   JWT presented as an HTTP Bearer token. There is no OAuth 2.0 authorization
