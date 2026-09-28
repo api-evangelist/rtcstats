@@ -183,8 +183,17 @@ x-enrichment:
   artifacts_added: 21
   pass: local-v1
 x-correction-request:
-  requested: '2026-09-27'
-  source: https://github.com/api-evangelist/rtcstats/issues/2
-  request: 'Well-known probe is stale (generated 2026-08-09): since v1.10 security.txt and other /.well-known
-    paths return 200 on rtcstats.com and api.rtcstats.com. Re-run the well-known harvest on both hosts.
-    Also asks how provider-published artifacts should be submitted -- answer on the issue.'
+  requested: '2026-09-28'
+  source:
+  - https://github.com/api-evangelist/rtcstats/pull/3
+  request: 'Provider PR #3 (tsahilevi, 2026-09-26): its well-known re-probe is committed as well-known/rtcstats-well-known.yml
+    (all 16 rows re-verified 2026-09-28; agent card now has 4 skills). Add pointers: security.txt, api-catalog and
+    agent-card.json on both rtcstats.com and api.rtcstats.com. The provider also asked that the profile point at
+    their own https://rtcstats.com/apis.yml (200 application/yaml): hand-merge its facts, record it as the provider-hosted
+    index, never apply it. MCP answers 401 with bearer auth as expected.'
+  earlier:
+    requested: '2026-09-27'
+    source: https://github.com/api-evangelist/rtcstats/issues/2
+    request: 'Well-known probe is stale (generated 2026-08-09): since v1.10 security.txt and other /.well-known
+      paths return 200 on rtcstats.com and api.rtcstats.com. Re-run the well-known harvest on both hosts. Also asks
+      how provider-published artifacts should be submitted -- answer on the issue.'
