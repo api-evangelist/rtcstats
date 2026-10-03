@@ -1,5 +1,5 @@
 ---
-name: Query rtcStats sessions over MCP
+name: rtcstats-query-sessions-over-mcp
 description: Wire an agent to the hosted rtcStats MCP server and use get_quota, list_sessions and get_session — including what the MCP surface deliberately cannot do.
 api: openapi/rtcstats-api-openapi.yml
 operations: [mcpStreamablePost, quota, listSessions, session]

@@ -2,6 +2,7 @@ generated: '2026-08-09'
 method: searched
 source: https://rtcstats.com/pricing + https://rtcstats.com/kb/usage-and-billing/credits-in-rtcstats
   + openapi/rtcstats-api-openapi.yml
+name: rtcStats API Rate Limits
 description: 'rtcStats does not rate-limit by requests per second and publishes no rate-limit response
   headers. Consumption is metered in credits — one credit per file analyzed — with a monthly allowance
   per plan. The limit is machine-readable at runtime: GET /v1.0/quota (and the get_quota MCP tool) return
@@ -42,6 +43,25 @@ rate_limits:
   rollover: false
   notes: Adds the embeddable viewer, 3rd-party storage and whitelabel sharing. 3 months retention, 50
     team members.
+limits:
+- name: Free monthly credits
+  plan: Free
+  scope: account
+  window: 1 month
+  max: 10
+  unit: credits
+- name: Developer monthly credits
+  plan: Developer
+  scope: account
+  window: 1 month
+  max: 500
+  unit: credits
+- name: Enterprise monthly credits
+  plan: Enterprise
+  scope: account
+  window: 1 month
+  max: 5000
+  unit: credits
 top_ups:
 - credits: 5000
   price_usd: 100
