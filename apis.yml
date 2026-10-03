@@ -175,6 +175,52 @@ common:
   url: https://rtcstats.com/tos
 - type: PrivacyPolicy
   url: https://rtcstats.com/privacy
+- type: APIsJSON
+  name: APIs.json index (provider-hosted)
+  url: https://rtcstats.com/apis.yml
+- type: WellKnown
+  url: well-known/rtcstats-well-known.yml
+- type: APICatalog
+  url: https://rtcstats.com/.well-known/api-catalog
+- type: APICatalog
+  url: https://api.rtcstats.com/.well-known/api-catalog
+- type: AgentCard
+  url: https://rtcstats.com/.well-known/agent-card.json
+- type: AgentCard
+  url: https://api.rtcstats.com/.well-known/agent-card.json
+- type: SecurityTxt
+  url: https://rtcstats.com/.well-known/security.txt
+- type: SecurityTxt
+  url: https://api.rtcstats.com/.well-known/security.txt
+- type: Deprecation
+  url: https://rtcstats.com/deprecation
+- type: ChangeLog
+  url: https://rtcstats.com/changelog
+- type: Compliance
+  url: https://rtcstats.com/compliance
+- type: Subprocessors
+  url: https://rtcstats.com/compliance
+- type: FinOps
+  url: https://rtcstats.com/finops.json
+- type: RateLimits
+  url: https://rtcstats.com/api-docs#rate-limits
+- type: PostmanCollection
+  url: https://rtcstats.com/schemas/rtcstats.postman_collection.json
+- type: SpectralRuleset
+  url: https://rtcstats.com/schemas/spectral.yml
+- type: Vocabulary
+  url: https://rtcstats.com/schemas/vocabulary.json
+- type: JSONSchema
+  url: https://rtcstats.com/schemas/index.json
+- type: JSONLD
+  url: https://rtcstats.com/schemas/context.jsonld
+- type: Conformance
+  url: https://rtcstats.com/schemas/conformance.yml
+- type: Overlay
+  url: https://rtcstats.com/schemas/overlay.yaml
+- type: Documentation
+  name: Open-source collector (rtcstats-js, rtcstats-server)
+  url: https://rtcstats.com/kb/open-source
 
 apis:
 - aid: rtcstats:rtcstats-rtcstats-api-api
@@ -187,6 +233,11 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/rtcstats-rtcstats-api-api-openapi.yml
+  - type: OpenAPI
+    name: OpenAPI (provider-hosted)
+    url: https://rtcstats.com/api/openapi
+  - type: Authentication
+    url: https://rtcstats.com/api-docs#authentication
   - type: Documentation
     url: https://rtcstats.com/api-docs
   - type: Documentation
@@ -221,6 +272,26 @@ apis:
     url: json-schema/rtcstats-quota-response-schema.json
   - type: JSONSchema
     url: json-schema/rtcstats-sessions-list-response-schema.json
+- aid: rtcstats:rtcstats-mcp-server
+  name: rtcStats MCP Server
+  description: Hosted Model Context Protocol server over Streamable HTTP, so coding agents can query analyzed WebRTC sessions. Tools get_quota,
+    list_sessions, get_session and get_observation_explanation. Bearer JWT auth with the same application token as the REST API (an unauthenticated
+    initialize returns 401 with WWW-Authenticate Bearer). Available on the Developer plan and above.
+  humanURL: https://rtcstats.com/integrations/mcp
+  baseURL: https://api.rtcstats.com/v1.0/mcp
+  tags:
+  - MCP
+  - WebRTC
+  - Observability
+  properties:
+  - type: MCPServer
+    url: mcp/rtcstats-mcp.yml
+  - type: Documentation
+    url: https://rtcstats.com/integrations/mcp
+  - type: AgentCard
+    url: https://rtcstats.com/.well-known/agent-card.json
+  - type: Authentication
+    url: https://rtcstats.com/api-docs#authentication
 
 generated:
   by: apis.io/add
@@ -236,6 +307,14 @@ x-correction-request:
     2026-09-28; agent card now has 4 skills). Add pointers: security.txt, api-catalog and agent-card.json on both rtcstats.com and api.rtcstats.com.
     The provider also asked that the profile point at their own https://rtcstats.com/apis.yml (200 application/yaml): hand-merge its facts, record
     it as the provider-hosted index, never apply it. MCP answers 401 with bearer auth as expected.'
+  applied: '2026-10-03'
+  applied_note: 'Applied by hand 2026-10-03, every URL re-checked live (200 with the expected content type; a nonexistent /.well-known path returns a real
+    404 on both hosts). Added APICatalog, AgentCard and SecurityTxt pointers for rtcstats.com and api.rtcstats.com (identical documents on both hosts;
+    agent card protocolVersion 0.3.0, four skills), a WellKnown pointer to the probe file, and https://rtcstats.com/apis.yml as the provider-hosted
+    APIsJSON index. Hand-merged from that index the pointers the profile lacked (deprecation, changelog, compliance/subprocessors, finops.json, rate
+    limits, the schemas/ Postman, Spectral, vocabulary, JSON Schema, JSON-LD, conformance and overlay files, the open-source collector docs, the
+    provider-hosted OpenAPI) and the rtcStats MCP Server as an API entry (initialize answers 401, WWW-Authenticate Bearer). Not merged: the index
+    calls the collector Apache-licensed, but GitHub reports rtcstats/rtcstats, rtcstats-server and rtcstats-js as MIT, so the MIT record stands.'
   earlier:
     requested: '2026-09-27'
     source: https://github.com/api-evangelist/rtcstats/issues/2
