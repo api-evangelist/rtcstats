@@ -76,6 +76,8 @@ maintainers:
 image: https://rtcstats.com/opengraph-image.png
 
 common:
+- type: IntegrationEdges
+  url: integrations/rtcstats-integration-edges.yml
 - type: Plans
   url: plans/rtcstats-plans-pricing.yml
 - type: Spectral
@@ -322,8 +324,8 @@ x-correction-request:
       and api.rtcstats.com. Re-run the well-known harvest on both hosts. Also asks how provider-published artifacts should be submitted -- answer
       on the issue.'
 x-enrichment:
-  date: '2026-09-28'
+  date: '2026-10-22'
   status: enriched
-  artifacts_added: 20
+  artifacts_added: 3
   pass: modular-v1
   engine: identity=local,contract=local,surfaces=local,docs=local,regulatory=local

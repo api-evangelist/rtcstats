@@ -1,0 +1,15 @@
+# rtcStats vulnerability disclosure (RFC 9116)
+# https://rtcstats.com/.well-known/security.txt
+
+Contact: mailto:support@rtcstats.com
+Contact: https://rtcstats.com/support
+Expires: 2027-08-10T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://rtcstats.com/.well-known/security.txt
+Policy: https://rtcstats.com/trust
+Hiring: https://rtcstats.com/about
+
+# The collection layer (rtcstats-js, rtcstats-server) is open source.
+# Report issues in the collector to the same address; we will route them.
+# Please do not run automated scans against api.rtcstats.com. Ask first and
+# we will give you a window.

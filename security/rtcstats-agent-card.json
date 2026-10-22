@@ -1,0 +1,19 @@
+{
+  "protocolVersion": "0.3.0",
+  "name": "rtcStats",
+  "description": "WebRTC observability. Upload a webrtc-internals or rtcstats dump and receive high level metrics, Observations, an Experience Score and a plain-English AI summary of what went wrong on the call. Analyzed sessions can then be listed, filtered and read back over MCP or REST.",
+  "url": "https://api.rtcstats.com/v1.0/mcp",
+  "preferredTransport": "JSONRPC",
+  "version": "2.0.0",
+  "provider": {"organization": "rtcStats","url": "https://rtcstats.com"},
+  "iconUrl": "https://rtcstats.com/logo.png",
+  "documentationUrl": "https://rtcstats.com/integrations/mcp",
+  "capabilities": {"streaming": true,"pushNotifications": false,"stateTransitionHistory": false},
+  "defaultInputModes": ["application/json","text/plain"],
+  "defaultOutputModes": ["application/json","text/plain"],
+  "securitySchemes": {"BearerAuth": {"type": "http","scheme": "bearer","bearerFormat": "JWT","description": "Application token issued from the rtcStats dashboard. Send as Authorization: Bearer <token>. Requires the Developer plan or above."}},
+  "security": [{"BearerAuth": []}],
+  "skills": [],
+  "supportsAuthenticatedExtendedCard": false,
+  "additionalInterfaces": []
+}

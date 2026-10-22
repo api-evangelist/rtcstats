@@ -1,3 +1,27 @@
+generated: '2026-10-22'
+method: searched
+source:
+- https://a2aregistry.org/api/agents
+- https://zapier.com/apps/rtcstats/integrations
+- https://n8n.io/integrations/rtcstats/
+- https://composio.dev/toolkits/rtcstats
+- https://monid.ai/tools/rtcstats
+checked:
+- https://a2aregistry.org/api/agents
+- https://api.nuget.org/v3
+- https://crates.io/api/v1
+- https://proxy.golang.org
+- https://pypi.org/pypi
+- https://registry.modelcontextprotocol.io/v0/servers
+- https://registry.npmjs.org
+- https://repo1.maven.org/maven2
+- https://rubygems.org/api/v1
+- https://composio.dev/toolkits/rtcstats
+- https://monid.ai/tools/rtcstats
+- https://n8n.io/integrations/rtcstats/
+- https://zapier.com/apps/rtcstats/integrations
+summary: null
+marketplace_apps: []
 edges:
 - partner_name: npm registry
   partner: npm
@@ -69,17 +93,4 @@ edges:
   - namespace-domain
   detected_by: sweep-agent-tools.py
   first_seen: '2026-10-14'
-generated: '2026-10-14'
-method: searched
-checked:
-- https://a2aregistry.org/api/agents
-- https://api.nuget.org/v3
-- https://crates.io/api/v1
-- https://proxy.golang.org
-- https://pypi.org/pypi
-- https://registry.modelcontextprotocol.io/v0/servers
-- https://registry.npmjs.org
-- https://repo1.maven.org/maven2
-- https://rubygems.org/api/v1
-source:
-- https://a2aregistry.org/api/agents
+templates: []

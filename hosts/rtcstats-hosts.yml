@@ -1,26 +1,43 @@
-generated: '2026-09-28'
+generated: '2026-10-22'
 method: derived
 source: the pre-flight dossier, apis.yml pointers, spec servers, well-known, vendors -- nothing fetched here
 generator: derive-hosts.py
 summary:
-  hosts: 4
-  own: 3
+  hosts: 6
+  own: 5
   other_domain: 0
   platform: 1
   roles:
   - api
+  - other
   - portal
+  - sandbox
   - source
   - website
 hosts:
-- host: api.rtcstats.com
+- host: api-staging.rtcstats.com
   found_by:
-  - apis[]
   - probed
   - site-links
   - contract-discovery
   - well-known
   types: []
+  serves: []
+  registrable_domain: rtcstats.com
+  role: other
+  relation: own
+- host: api.rtcstats.com
+  found_by:
+  - pointer
+  - apis[]
+  - probed
+  - site-links
+  - contract-discovery
+  - well-known
+  types:
+  - APICatalog
+  - AgentCard
+  - SecurityTxt
   serves:
   - api
   registrable_domain: rtcstats.com
@@ -66,6 +83,21 @@ hosts:
   - SignUp
   - TermsOfService
   - PrivacyPolicy
+  - APIsJSON
+  - APICatalog
+  - AgentCard
+  - SecurityTxt
+  - Deprecation
+  - Subprocessors
+  - FinOps
+  - RateLimits
+  - PostmanCollection
+  - SpectralRuleset
+  - Vocabulary
+  - JSONSchema
+  - JSONLD
+  - Conformance
+  - Overlay
   serves:
   - docs
   - spec
@@ -73,6 +105,17 @@ hosts:
   vendor: vercel
   registrable_domain: rtcstats.com
   role: portal
+  relation: own
+- host: staging.rtcstats.com
+  found_by:
+  - probed
+  - site-links
+  - contract-discovery
+  - well-known
+  types: []
+  serves: []
+  registrable_domain: rtcstats.com
+  role: sandbox
   relation: own
 - host: www.rtcstats.com
   found_by:

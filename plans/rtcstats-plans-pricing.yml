@@ -1,28 +1,28 @@
-generated: '2026-09-28'
+generated: '2026-10-22'
 method: searched
 generator: extract-docs-artifacts.py (local)
 source: https://rtcstats.com/pricing
 sources:
 - https://rtcstats.com/pricing
-- https://rtcstats.com/kb/usage-and-billing
 name: rtcStats pricing
 audience: developer-api
-pricing_basis: per-seat
+pricing_basis: negotiated
 plans:
 - name: Free
-  price_text: $0 /month
+  price_text: $ 0 /month
   price: 0
-  description: Free plan with limited credits and features
+  description: Explore and debug on your own
   features:
-  - Web client SDK
+  - Web client
   - Server collector
   - 3 team members
-  - 10 credits per month
+  - 10 credits
   - 1 month retention
   - Manual dashboard uploads
   - webrtc-internals support
   - rtcstats support
   - Public sharing
+  - First month at full Developer-level analysis, free
   limits:
   - name: team_members
     limit_text: 3 team members
@@ -31,14 +31,14 @@ plans:
   - name: retention
     limit_text: 1 month retention
 - name: Developer
-  price_text: $199 /month
+  price_text: $ 199 /month
   price: 199
-  description: Root‑cause analysis for every session
+  description: Root-cause analysis for every session
   features:
-  - Web client SDK
+  - Web client
   - Server collector
   - 10 team members
-  - 500 credits per month
+  - 500 credits
   - 3 months retention
   - Manual dashboard uploads
   - webrtc-internals support
@@ -57,14 +57,14 @@ plans:
   - name: retention
     limit_text: 3 months retention
 - name: Enterprise
-  price_text: $999 /month
+  price_text: $ 999 /month
   price: 999
   description: WebRTC observability at scale
   features:
-  - Web client SDK
+  - Web client
   - Server collector
   - 50 team members
-  - 5,000 credits per month
+  - 5,000 credits
   - 3 months retention
   - Manual dashboard uploads
   - webrtc-internals support
@@ -85,53 +85,3 @@ plans:
   - name: retention
     limit_text: 3 months retention
 docs: https://rtcstats.com/pricing
-x-canonical:
-  generated: '2026-10-08'
-  vocabulary: all/0-working/economics/plans-canonical.yml
-  models:
-  - free
-  - subscription
-  units: []
-  plans:
-  - name: Free
-    access: other
-    model: free
-    model_how: derived
-    units: []
-    periods: []
-  - name: Developer
-    access: other
-    model: subscription
-    model_how: derived
-    units: []
-    periods: []
-  - name: Enterprise
-    access: other
-    model: subscription
-    model_how: derived
-    units: []
-    periods: []
-  - name: Free
-    access: freemium
-    model: free
-    model_how: derived
-    units:
-    - other
-    periods:
-    - month
-  - name: Developer
-    access: other
-    model: subscription
-    model_how: stated
-    units:
-    - other
-    periods:
-    - month
-  - name: Enterprise
-    access: other
-    model: subscription
-    model_how: stated
-    units:
-    - other
-    periods:
-    - month

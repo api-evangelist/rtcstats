@@ -1,29 +1,33 @@
-generated: '2026-09-28'
+generated: '2026-10-03'
 method: probed
-source: https://rtcstats.com/privacy
+source:
+  - https://rtcstats.com/compliance
 signals:
   data_subject_request:
-    quote: "Your rights with respect to your information"
-    url: https://rtcstats.com/privacy#your-rights
-    section: "Your rights"
-    note: outlines data subject rights and how to exercise them.
+    evidence:
+      - source: https://rtcstats.com/compliance
+        http_status: 200
+        fetched: "true"
+        quote: "You can delete an individual session at any time through the dashboard or with DELETE /v1.0/sessions/ {rtcstatsId}."
+        note: Users can request deletion of their data.
+  subprocessors:
+    evidence:
+      - source: https://rtcstats.com/compliance
+        http_status: 200
+        fetched: "true"
+        quote: "Sub-processors Third parties that process data on our behalf in order to run the hosted service."
+        note: Lists third‑party processors.
   data_retention:
-    quote: "We keep this content for at least the retention period of the plan you are using. If you delete your account, we'll delete the content within 60 days."
-    url: https://rtcstats.com/privacy#data-retention
-    section: "Data retention"
-    note: specifies retention period and deletion timeline.
+    evidence:
+      - source: https://rtcstats.com/compliance
+        http_status: 200
+        fetched: "true"
+        quote: "Each plan carries a retention period: the window in which we show you a session and guarantee it is stored. It is set by plan, can be extended per account, and is published in machine‑readable form at /finops.json ( guaranteedRetentionDays )."
+        note: Describes retention periods per plan.
   data_residency:
-    quote: "Location of site and data"
-    url: https://rtcstats.com/privacy#location
-    section: "Location of site and data"
-    note: indicates where data is stored.
-  eu_transfer:
-    quote: "When transferring personal data from the EU"
-    url: https://rtcstats.com/privacy#eu-transfer
-    section: "When transferring personal data from the EU"
-    note: addresses cross-border data transfers.
-  incident_notification:
-    quote: "When you sign up on rtcstats.com, we ask for identifying information... We log all account access by full IP address for security and fraud prevention purposes"
-    url: https://rtcstats.com/privacy#when-we-access
-    section: "When we access or disclose your information"
-    note: mentions security monitoring but no explicit breach notification.
+    evidence:
+      - source: https://rtcstats.com/compliance
+        http_status: 200
+        fetched: "true"
+        quote: "The hosted service runs in the United States. If you are in the EU or UK, data you send us is transferred to and stored in the United States."
+        note: Data is stored in the US.

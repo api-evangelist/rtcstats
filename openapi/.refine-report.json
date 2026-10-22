@@ -1,12 +1,15 @@
 {
   "provider": "rtcstats",
   "sources": [
-    "_original/rtcstats-api-openapi.yml"
+    "_original/rtcstats-api-openapi.yml",
+    "rtcstats-provider-openapi.yml"
   ],
   "outputs": [
     "rtcstats-rtcstats-api-api-openapi.yml"
   ],
-  "archived": [],
+  "archived": [
+    "archived openapi/rtcstats-provider-openapi.yml"
+  ],
   "errors": [],
   "warnings": [],
   "notes": [
@@ -14,6 +17,8 @@
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "rtcstats-api-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
     "rtcstats-api-openapi.yml: declared missing tag: rtcStats API",
+    "rtcstats-provider-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "tag 'rtcStats API' spans 2 source specs (rtcstats-api-openapi.yml, rtcstats-provider-openapi.yml): per-path servers applied",
     "apis.yml register: already-registered"
   ],
   "skipped": [
